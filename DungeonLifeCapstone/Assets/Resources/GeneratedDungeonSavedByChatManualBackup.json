@@ -1,0 +1,191 @@
+{
+  "rooms": [
+    {
+      "x": 0,
+      "y": 0,
+      "width": 2,
+      "height": 2,
+      "type": "spawn",
+      "enemies": [],
+      "powerups": [],
+      "treasures": []
+    },
+    {
+      "x": 3,
+      "y": 0,
+      "width": 2,
+      "height": 2,
+      "type": "normal",
+      "enemies": [
+        {
+          "type": "melee",
+          "patrolRadius": 1
+        }
+      ],
+      "powerups": [],
+      "treasures": []
+    },
+    {
+      "x": 7,
+      "y": 0,
+      "width": 2,
+      "height": 2,
+      "type": "normal",
+      "enemies": [
+        {
+          "type": "ranged",
+          "patrolRadius": 2
+        },
+        {
+          "type": "melee",
+          "patrolRadius": 1
+        }
+      ],
+      "powerups": [],
+      "treasures": []
+    },
+    {
+      "x": 0,
+      "y": 4,
+      "width": 2,
+      "height": 2,
+      "type": "shop",
+      "enemies": [],
+      "powerups": [],
+      "treasures": []
+    },
+    {
+      "x": 8,
+      "y": 4,
+      "width": 2,
+      "height": 2,
+      "type": "treasure",
+      "enemies": [],
+      "powerups": [
+        {
+          "type": "speed",
+          "x": 9,
+          "y": 5
+        }
+      ],
+      "treasures": [
+        {
+          "type": "gold",
+          "x": 8,
+          "y": 5
+        },
+        {
+          "type": "artifact",
+          "x": 9,
+          "y": 4
+        }
+      ]
+    },
+    {
+      "x": 0,
+      "y": 8,
+      "width": 2,
+      "height": 2,
+      "type": "normal",
+      "enemies": [
+        {
+          "type": "melee",
+          "patrolRadius": 1
+        }
+      ],
+      "powerups": [
+        {
+          "type": "damage",
+          "x": 1,
+          "y": 9
+        }
+      ],
+      "treasures": []
+    },
+    {
+      "x": 5,
+      "y": 8,
+      "width": 2,
+      "height": 2,
+      "type": "normal",
+      "enemies": [
+        {
+          "type": "ranged",
+          "patrolRadius": 3
+        }
+      ],
+      "powerups": [],
+      "treasures": []
+    },
+    {
+      "x": 9,
+      "y": 8,
+      "width": 2,
+      "height": 2,
+      "type": "normal",
+      "enemies": [
+        {
+          "type": "melee",
+          "patrolRadius": 2
+        }
+      ],
+      "powerups": [],
+      "treasures": []
+    },
+    {
+      "x": 7,
+      "y": 12,
+      "width": 3,
+      "height": 3,
+      "type": "boss",
+      "enemies": [
+        {
+          "type": "boss",
+          "patrolRadius": 0
+        }
+      ],
+      "powerups": [
+        {
+          "type": "health",
+          "x": 9,
+          "y": 12
+        }
+      ],
+      "treasures": []
+    }
+  ],
+  "connections": [
+    [
+      [ 0, 0 ],
+      [ 3, 0 ]
+    ],
+    [
+      [ 3, 0 ],
+      [ 7, 0 ]
+    ],
+    [
+      [ 0, 0 ],
+      [ 0, 4 ]
+    ],
+    [
+      [ 0, 4 ],
+      [ 8, 4 ]
+    ],
+    [
+      [ 8, 4 ],
+      [ 9, 8 ]
+    ],
+    [
+      [ 0, 8 ],
+      [ 5, 8 ]
+    ],
+    [
+      [ 5, 8 ],
+      [ 9, 8 ]
+    ],
+    [
+      [ 9, 8 ],
+      [ 7, 12 ]
+    ]
+  ]
+}

@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: b9ca87a16fee4f04a91215304cca5772
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 130827
+  packageName: Dungeon Crawler 2D Art Pack
+  packageVersion: 1.1
+  assetPath: Assets/Dungeon Crawler 2D Art Pack/Prefabs/Level_A.prefab
+  uploadId: 533780

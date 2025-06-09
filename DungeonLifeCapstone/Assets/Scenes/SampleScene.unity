@@ -38,7 +38,6 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -250,12 +249,12 @@ MonoBehaviour:
   m_RequiresColorTexture: 0
   m_Version: 2
   m_TaaSettings:
-    quality: 3
-    frameInfluence: 0.1
-    jitterScale: 1
-    mipBias: 0
-    varianceClampScale: 0.9
-    contrastAdaptiveSharpening: 0
+    m_Quality: 3
+    m_FrameInfluence: 0.1
+    m_JitterScale: 1
+    m_MipBias: 0
+    m_VarianceClampScale: 0.9
+    m_ContrastAdaptiveSharpening: 0
 --- !u!1 &410087039
 GameObject:
   m_ObjectHideFlags: 0
@@ -336,6 +335,9 @@ Light:
   m_ForceVisible: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0
+  m_LightUnit: 1
+  m_LuxAtDistance: 1
+  m_EnableSpotReflector: 1
 --- !u!4 &410087041
 Transform:
   m_ObjectHideFlags: 0
@@ -423,6 +425,77 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1385207781
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1385207784}
+  - component: {fileID: 1385207783}
+  - component: {fileID: 1385207782}
+  m_Layer: 0
+  m_Name: DungeonManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1385207782
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1385207781}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a0eef52fb867f764fa14a4251070dc1c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  dungeonJson: {fileID: 4900000, guid: 76456fa5f6b832446873729509021b8e, type: 3}
+--- !u!114 &1385207783
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1385207781}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4264bb4153ac464daec02463fff3f9e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  loader: {fileID: 1385207782}
+  tileSize: 5
+  spawnRoomPrefab: {fileID: 1289456404150176, guid: b9ca87a16fee4f04a91215304cca5772, type: 3}
+  normalRoomPrefab: {fileID: 1289456404150176, guid: b9ca87a16fee4f04a91215304cca5772, type: 3}
+  treasureRoomPrefab: {fileID: 1289456404150176, guid: b9ca87a16fee4f04a91215304cca5772, type: 3}
+  bossRoomPrefab: {fileID: 1289456404150176, guid: b9ca87a16fee4f04a91215304cca5772, type: 3}
+  meleeEnemyPrefab: {fileID: 4279802846746209650, guid: 06410c5b26b87b441940d7ef2703111a, type: 3}
+  rangedEnemyPrefab: {fileID: 840261188983404116, guid: e8b0a1194692aeb4b82e8ab37e8ed135, type: 3}
+  bossEnemyPrefab: {fileID: 4034295282541716241, guid: 65622276a3f68c44680bcc64e6e2d345, type: 3}
+  damagePowerupPrefab: {fileID: 3779485730302133615, guid: d5a4c88fd90b91a48adb21a14541f3eb, type: 3}
+  speedPowerupPrefab: {fileID: 5990368126397749294, guid: a19370f3099b5db4188223f24a95e8e7, type: 3}
+  healthPowerupPrefab: {fileID: 4554805147581745855, guid: 845f5626da386ea4e83acf87f85e456e, type: 3}
+  treasurePrefab: {fileID: 2059674290478143238, guid: d7aa75633ad7d5746b8811c55e52e53e, type: 3}
+--- !u!4 &1385207784
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1385207781}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -430,3 +503,4 @@ SceneRoots:
   - {fileID: 330585546}
   - {fileID: 410087041}
   - {fileID: 832575519}
+  - {fileID: 1385207784}
