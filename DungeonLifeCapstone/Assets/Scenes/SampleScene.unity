@@ -469,11 +469,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   loader: {fileID: 1385207782}
-  tileSize: 5
+  tileSize: 15
   spawnRoomPrefab: {fileID: 1289456404150176, guid: b9ca87a16fee4f04a91215304cca5772, type: 3}
   normalRoomPrefab: {fileID: 1289456404150176, guid: b9ca87a16fee4f04a91215304cca5772, type: 3}
   treasureRoomPrefab: {fileID: 1289456404150176, guid: b9ca87a16fee4f04a91215304cca5772, type: 3}
   bossRoomPrefab: {fileID: 1289456404150176, guid: b9ca87a16fee4f04a91215304cca5772, type: 3}
+  corridorTilePrefab: {fileID: 1289456404150176, guid: b9ca87a16fee4f04a91215304cca5772, type: 3}
   meleeEnemyPrefab: {fileID: 4279802846746209650, guid: 06410c5b26b87b441940d7ef2703111a, type: 3}
   rangedEnemyPrefab: {fileID: 840261188983404116, guid: e8b0a1194692aeb4b82e8ab37e8ed135, type: 3}
   bossEnemyPrefab: {fileID: 4034295282541716241, guid: 65622276a3f68c44680bcc64e6e2d345, type: 3}

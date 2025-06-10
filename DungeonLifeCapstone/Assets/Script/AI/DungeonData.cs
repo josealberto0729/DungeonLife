@@ -5,6 +5,15 @@ public class DungeonData
     public Room[] rooms;
     public Powerup[] powerups;
     public string[] objectives;
+    public Connection[] connections;
+}
+[System.Serializable]
+public class Connection
+{
+    public int fromX;
+    public int fromY;
+    public int toX;
+    public int toY;
 }
 
 [System.Serializable]
