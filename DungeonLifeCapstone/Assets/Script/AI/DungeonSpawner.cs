@@ -4,14 +4,16 @@ using UnityEngine;
 public class DungeonSpawner : MonoBehaviour
 {
     public DungeonLoader loader;
-    public float tileSize = 5f;
+    public Vector2 tileSize = new Vector2(5f, 5f);
+    public int? customSeed = null;
 
     // Prefabs
     public GameObject spawnRoomPrefab;
     public GameObject normalRoomPrefab;
     public GameObject treasureRoomPrefab;
     public GameObject bossRoomPrefab;
-    public GameObject corridorTilePrefab; 
+    public GameObject corridorTilePrefab;
+    public GameObject shopRoomPrefab;
 
     public GameObject meleeEnemyPrefab;
     public GameObject rangedEnemyPrefab;
@@ -21,9 +23,7 @@ public class DungeonSpawner : MonoBehaviour
     public GameObject speedPowerupPrefab;
     public GameObject healthPowerupPrefab;
 
-    public GameObject treasurePrefab; 
-
-
+    public GameObject treasurePrefab;
 
     void Start()
     {
@@ -32,6 +32,20 @@ public class DungeonSpawner : MonoBehaviour
             Debug.LogError("DungeonLoader reference missing!");
             return;
         }
+
+        // Set tile size based on prefab size
+        if (corridorTilePrefab != null)
+        {
+            Vector3 size = GetFullPrefabSize(corridorTilePrefab);
+            tileSize = new Vector2(size.x, size.y);
+            Debug.Log("Tile size set from prefab: " + tileSize);
+        }
+
+        // Random seed setup
+        int seed = customSeed ?? System.DateTime.Now.Millisecond;
+        Random.InitState(seed);
+        Debug.Log("Seed used: " + seed);
+
         GenerateDungeon();
     }
 
@@ -43,18 +57,16 @@ public class DungeonSpawner : MonoBehaviour
             Vector2Int end = new Vector2Int(conn.toX, conn.toY);
             Vector2Int current = start;
 
-            // Move horizontally
             while (current.x != end.x)
             {
                 current.x += (end.x > current.x) ? 1 : -1;
-                Instantiate(corridorTilePrefab, new Vector3(current.x * tileSize, current.y * tileSize, 0), Quaternion.identity);
+                Instantiate(corridorTilePrefab, new Vector3(current.x * tileSize.x, current.y * tileSize.y, 0), Quaternion.identity);
             }
 
-            // Move vertically
             while (current.y != end.y)
             {
                 current.y += (end.y > current.y) ? 1 : -1;
-                Instantiate(corridorTilePrefab, new Vector3(current.x * tileSize, current.y * tileSize, 0), Quaternion.identity);
+                Instantiate(corridorTilePrefab, new Vector3(current.x * tileSize.x, current.y * tileSize.y, 0), Quaternion.identity);
             }
         }
     }
@@ -68,43 +80,37 @@ public class DungeonSpawner : MonoBehaviour
             return;
         }
 
-        // Spawn Rooms and Enemies
         foreach (Room room in data.rooms)
         {
-            //Vector3 roomPos = new Vector3(room.x * tileSize, 0, room.y * tileSize);
-            Vector3 roomPos = new Vector3(room.x * tileSize, room.y * tileSize, 0);
-
+            Vector3 roomPos = new Vector3(room.x * tileSize.x, room.y * tileSize.y, 0);
             GameObject roomPrefab = GetRoomPrefab(room.type);
+
             if (roomPrefab != null)
             {
                 GameObject roomObj = Instantiate(roomPrefab, roomPos, Quaternion.identity);
 
-                // Enemies
                 foreach (Enemy enemy in room.enemies)
                 {
-                    float enemyX = roomPos.x + Random.Range(0f, room.width) * tileSize;
-                    float enemyY = roomPos.y + Random.Range(0f, room.height) * tileSize;
+                    float enemyX = roomPos.x + Random.Range(0f, room.width) * tileSize.x;
+                    float enemyY = roomPos.y + Random.Range(0f, room.height) * tileSize.y;
                     Vector3 enemyPos = new Vector3(enemyX, enemyY, 0);
-
 
                     GameObject enemyPrefab = GetEnemyPrefab(enemy.type);
                     if (enemyPrefab != null)
                         Instantiate(enemyPrefab, enemyPos, Quaternion.identity, roomObj.transform);
                 }
 
-                // Powerups in room
                 foreach (Powerup powerup in room.powerups)
                 {
-                    Vector3 powerupPos = new Vector3(powerup.x * tileSize, powerup.y * tileSize, 0);
+                    Vector3 powerupPos = new Vector3(powerup.x * tileSize.x, powerup.y * tileSize.y, 0);
                     GameObject powerupPrefab = GetPowerupPrefab(powerup.type);
                     if (powerupPrefab != null)
                         Instantiate(powerupPrefab, powerupPos, Quaternion.identity, roomObj.transform);
                 }
 
-                // Treasures in room
                 foreach (Treasure treasure in room.treasures)
                 {
-                    Vector3 treasurePos = new Vector3(treasure.x * tileSize, treasure.y * tileSize, 0);
+                    Vector3 treasurePos = new Vector3(treasure.x * tileSize.x, treasure.y * tileSize.y, 0);
                     if (treasurePrefab != null)
                         Instantiate(treasurePrefab, treasurePos, Quaternion.identity, roomObj.transform);
                 }
@@ -114,18 +120,15 @@ public class DungeonSpawner : MonoBehaviour
                 Debug.LogWarning($"Room prefab not found for type: {room.type}");
             }
         }
-        if (data.connections != null)
-        {
-            GenerateCorridors(data.connections);
-        }
 
+        if (data.connections != null)
+            GenerateCorridors(data.connections);
 
         if (data.powerups != null)
         {
-            // Powerups
             foreach (Powerup powerup in data.powerups)
             {
-                Vector3 powerupPos = new Vector3(powerup.x * tileSize, 0, powerup.y * tileSize);
+                Vector3 powerupPos = new Vector3(powerup.x * tileSize.x, 0, powerup.y * tileSize.y);
                 GameObject powerupPrefab = GetPowerupPrefab(powerup.type);
                 if (powerupPrefab != null)
                     Instantiate(powerupPrefab, powerupPos, Quaternion.identity);
@@ -134,20 +137,35 @@ public class DungeonSpawner : MonoBehaviour
             }
         }
 
-        // Objectives
         if (data.objectives != null)
         {
             foreach (string obj in data.objectives)
-            {
                 Debug.Log("Objective: " + obj);
-            }
         }
     }
-    Vector3 GetPrefabSize(GameObject prefab)
+
+    Vector3 GetFullPrefabSize(GameObject prefab)
     {
-        Renderer renderer = prefab.GetComponentInChildren<Renderer>();
-        return renderer != null ? renderer.bounds.size : Vector3.one;
+        GameObject temp = Instantiate(prefab);
+        Renderer[] renderers = temp.GetComponentsInChildren<Renderer>();
+
+        if (renderers.Length == 0)
+        {
+            Destroy(temp);
+            return Vector3.one; // fallback
+        }
+
+        Bounds combinedBounds = renderers[0].bounds;
+        for (int i = 1; i < renderers.Length; i++)
+        {
+            combinedBounds.Encapsulate(renderers[i].bounds);
+        }
+
+        Vector3 size = combinedBounds.size;
+        Destroy(temp);
+        return size;
     }
+
     GameObject GetRoomPrefab(string type)
     {
         switch (type.ToLower())
@@ -156,6 +174,7 @@ public class DungeonSpawner : MonoBehaviour
             case "normal": return normalRoomPrefab;
             case "treasure": return treasureRoomPrefab;
             case "boss": return bossRoomPrefab;
+            case "shop": return shopRoomPrefab;
             default: return null;
         }
     }
