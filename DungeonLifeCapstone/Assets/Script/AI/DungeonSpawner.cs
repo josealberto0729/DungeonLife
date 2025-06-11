@@ -143,7 +143,11 @@ public class DungeonSpawner : MonoBehaviour
             }
         }
     }
-
+    Vector3 GetPrefabSize(GameObject prefab)
+    {
+        Renderer renderer = prefab.GetComponentInChildren<Renderer>();
+        return renderer != null ? renderer.bounds.size : Vector3.one;
+    }
     GameObject GetRoomPrefab(string type)
     {
         switch (type.ToLower())
