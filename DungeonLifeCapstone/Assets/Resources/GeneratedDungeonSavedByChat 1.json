@@ -1,0 +1,133 @@
+{
+  "rooms": [
+    {
+      "x": 0,
+      "y": 0,
+      "width": 2,
+      "height": 2,
+      "type": "spawn",
+      "enemies": [],
+      "powerups": [],
+      "treasures": []
+    },
+    {
+      "x": 4,
+      "y": 0,
+      "width": 2,
+      "height": 2,
+      "type": "normal",
+      "enemies": [
+        {
+          "type": "ranged",
+          "patrolRadius": 2
+        }
+      ],
+      "powerups": [],
+      "treasures": []
+    },
+    {
+      "x": 6,
+      "y": 3,
+      "width": 2,
+      "height": 2,
+      "type": "shop",
+      "enemies": [],
+      "powerups": [
+        {
+          "type": "speed",
+          "x": 7,
+          "y": 4
+        }
+      ],
+      "treasures": []
+    },
+    {
+      "x": 1,
+      "y": 5,
+      "width": 2,
+      "height": 2,
+      "type": "normal",
+      "enemies": [
+        {
+          "type": "melee",
+          "patrolRadius": 1
+        },
+        {
+          "type": "melee",
+          "patrolRadius": 2
+        }
+      ],
+      "powerups": [],
+      "treasures": []
+    },
+    {
+      "x": 5,
+      "y": 7,
+      "width": 2,
+      "height": 2,
+      "type": "treasure",
+      "enemies": [],
+      "powerups": [],
+      "treasures": [
+        {
+          "type": "artifact",
+          "x": 6,
+          "y": 8
+        }
+      ]
+    },
+    {
+      "x": 8,
+      "y": 7,
+      "width": 3,
+      "height": 3,
+      "type": "boss",
+      "enemies": [
+        {
+          "type": "boss",
+          "patrolRadius": 0
+        }
+      ],
+      "powerups": [
+        {
+          "type": "health",
+          "x": 9,
+          "y": 8
+        }
+      ],
+      "treasures": []
+    }
+  ],
+  "connections": [
+    {
+      "fromX": 0,
+      "fromY": 0,
+      "toX": 4,
+      "toY": 0
+    },
+    {
+      "fromX": 4,
+      "fromY": 0,
+      "toX": 6,
+      "toY": 3
+    },
+    {
+      "fromX": 6,
+      "fromY": 3,
+      "toX": 1,
+      "toY": 5
+    },
+    {
+      "fromX": 1,
+      "fromY": 5,
+      "toX": 5,
+      "toY": 7
+    },
+    {
+      "fromX": 5,
+      "fromY": 7,
+      "toX": 8,
+      "toY": 7
+    }
+  ]
+}

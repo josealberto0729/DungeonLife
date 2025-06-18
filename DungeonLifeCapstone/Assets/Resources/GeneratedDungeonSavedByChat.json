@@ -1,81 +1,207 @@
 {
   "rooms": [
     {
-      "id": 1,
+      "x": 0,
+      "y": 0,
+      "width": 2,
+      "height": 2,
       "type": "spawn",
-      "coordinates": [0, 0],
-      "size": [5, 5],
+      "enemies": [],
+      "powerups": [],
+      "treasures": []
+    },
+    {
+      "x": 2,
+      "y": 0,
+      "width": 3,
+      "height": 2,
+      "type": "normal",
       "enemies": [
         {
-          "type": "goblin",
+          "type": "ranged",
+          "patrolRadius": 2
+        }
+      ],
+      "powerups": [],
+      "treasures": []
+    },
+    {
+      "x": 6,
+      "y": 0,
+      "width": 2,
+      "height": 2,
+      "type": "normal",
+      "enemies": [
+        {
+          "type": "melee",
+          "patrolRadius": 1
+        },
+        {
+          "type": "ranged",
+          "patrolRadius": 2
+        }
+      ],
+      "powerups": [],
+      "treasures": []
+    },
+    {
+      "x": 0,
+      "y": 3,
+      "width": 2,
+      "height": 2,
+      "type": "shop",
+      "enemies": [],
+      "powerups": [],
+      "treasures": []
+    },
+    {
+      "x": 5,
+      "y": 3,
+      "width": 3,
+      "height": 2,
+      "type": "treasure",
+      "enemies": [],
+      "powerups": [
+        {
+          "type": "damage",
+          "x": 6,
+          "y": 4
+        }
+      ],
+      "treasures": [
+        {
+          "type": "gold",
+          "x": 5,
+          "y": 3
+        },
+        {
+          "type": "artifact",
+          "x": 7,
+          "y": 4
+        }
+      ]
+    },
+    {
+      "x": 2,
+      "y": 6,
+      "width": 2,
+      "height": 2,
+      "type": "normal",
+      "enemies": [
+        {
+          "type": "melee",
+          "patrolRadius": 2
+        }
+      ],
+      "powerups": [
+        {
+          "type": "speed",
+          "x": 3,
+          "y": 7
+        }
+      ],
+      "treasures": []
+    },
+    {
+      "x": 6,
+      "y": 6,
+      "width": 2,
+      "height": 2,
+      "type": "normal",
+      "enemies": [
+        {
+          "type": "ranged",
           "patrolRadius": 3
+        }
+      ],
+      "powerups": [],
+      "treasures": []
+    },
+    {
+      "x": 1,
+      "y": 9,
+      "width": 2,
+      "height": 2,
+      "type": "normal",
+      "enemies": [
+        {
+          "type": "melee",
+          "patrolRadius": 1
+        }
+      ],
+      "powerups": [],
+      "treasures": []
+    },
+    {
+      "x": 5,
+      "y": 10,
+      "width": 3,
+      "height": 3,
+      "type": "boss",
+      "enemies": [
+        {
+          "type": "boss",
+          "patrolRadius": 0
         }
       ],
       "powerups": [
         {
           "type": "health",
-          "position": [2, 2]
+          "x": 7,
+          "y": 11
         }
       ],
       "treasures": []
-    },
-    {
-      "id": 2,
-      "type": "normal",
-      "coordinates": [10, 0],
-      "size": [6, 6],
-      "enemies": [],
-      "powerups": [],
-      "treasures": []
-    },
-    {
-      "id": 3,
-      "type": "shop",
-      "coordinates": [0, 10],
-      "size": [4, 4],
-      "enemies": [],
-      "powerups": [],
-      "treasures": []
-    },
-    {
-      "id": 4,
-      "type": "treasure",
-      "coordinates": [15, 10],
-      "size": [3, 3],
-      "enemies": [],
-      "powerups": [],
-      "treasures": [
-        {
-          "type": "gold",
-          "position": [1, 1]
-        }
-      ]
-    },
-    {
-      "id": 5,
-      "type": "boss",
-      "coordinates": [20, 0],
-      "size": [8, 8],
-      "enemies": [
-        {
-          "type": "dragon",
-          "patrolRadius": 5
-        }
-      ],
-      "powerups": [],
-      "treasures": [
-        {
-          "type": "legendary weapon",
-          "position": [4, 4]
-        }
-      ]
     }
   ],
-  "roomConnections": [
-    [2, 4],
-    [1, 2],
-    [1, 3],
-    [2, 5],
-    [4, 5]
+  "connections": [
+    {
+      "fromX": 0,
+      "fromY": 0,
+      "toX": 2,
+      "toY": 0
+    },
+    {
+      "fromX": 2,
+      "fromY": 0,
+      "toX": 6,
+      "toY": 0
+    },
+    {
+      "fromX": 0,
+      "fromY": 0,
+      "toX": 0,
+      "toY": 3
+    },
+    {
+      "fromX": 6,
+      "fromY": 0,
+      "toX": 5,
+      "toY": 3
+    },
+    {
+      "fromX": 5,
+      "fromY": 3,
+      "toX": 6,
+      "toY": 6
+    },
+    {
+      "fromX": 0,
+      "fromY": 3,
+      "toX": 2,
+      "toY": 6
+    },
+    {
+      "fromX": 2,
+      "fromY": 6,
+      "toX": 1,
+      "toY": 9
+    },
+    {
+      "fromX": 6,
+      "fromY": 6,
+      "toX": 5,
+      "toY": 10
+    }
   ]
 }

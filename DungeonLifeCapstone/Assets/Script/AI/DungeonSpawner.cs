@@ -122,7 +122,7 @@ public class DungeonSpawner : MonoBehaviour
         }
 
         if (data.connections != null)
-            GenerateCorridors(data.connections);
+            GenerateCorridors(data.connections.ToArray());
 
         if (data.powerups != null)
         {

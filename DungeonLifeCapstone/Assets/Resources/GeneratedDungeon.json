@@ -1,0 +1,70 @@
+{
+  "rooms": [
+    {
+      "x": 2,
+      "y": 0,
+      "width": 4,
+      "height": 3,
+      "type": "normal",
+      "enemies": [],
+      "powerups": [],
+      "treasures": []
+    },
+    {
+      "x": 2,
+      "y": 4,
+      "width": 4,
+      "height": 3,
+      "type": "boss",
+      "enemies": [],
+      "powerups": [],
+      "treasures": []
+    },
+    {
+      "x": 0,
+      "y": 8,
+      "width": 4,
+      "height": 3,
+      "type": "spawn",
+      "enemies": [],
+      "powerups": [],
+      "treasures": []
+    },
+    {
+      "x": 6,
+      "y": 8,
+      "width": 4,
+      "height": 3,
+      "type": "treasure",
+      "enemies": [],
+      "powerups": [],
+      "treasures": []
+    }
+  ],
+  "connections": [
+    {
+      "fromX": 2,
+      "fromY": 0,
+      "toX": 2,
+      "toY": 4
+    },
+    {
+      "fromX": 2,
+      "fromY": 0,
+      "toX": 0,
+      "toY": 8
+    },
+    {
+      "fromX": 2,
+      "fromY": 4,
+      "toX": 6,
+      "toY": 8
+    },
+    {
+      "fromX": 0,
+      "fromY": 8,
+      "toX": 6,
+      "toY": 8
+    }
+  ]
+}

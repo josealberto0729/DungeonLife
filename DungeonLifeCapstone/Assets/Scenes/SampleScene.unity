@@ -118,6 +118,56 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &173908187
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 173908189}
+  - component: {fileID: 173908188}
+  m_Layer: 0
+  m_Name: Test
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!114 &173908188
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 173908187}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e04e573087a6523488434bfbc88ac8d9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  roomCount: 10
+  roomSizeMin: {x: 2, y: 2}
+  roomSizeMax: {x: 4, y: 4}
+  dungeonWidth: 20
+  dungeonHeight: 20
+  loader: {fileID: 1385207782}
+--- !u!4 &173908189
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 173908187}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 88.55157, y: 155.73888, z: -15.160197}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &330585543
 GameObject:
   m_ObjectHideFlags: 0
@@ -425,6 +475,59 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &844399047
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 844399049}
+  - component: {fileID: 844399050}
+  m_Layer: 0
+  m_Name: OpenAI
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &844399049
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 844399047}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 54.424824, y: 52.530323, z: -2.6249778}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &844399050
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 844399047}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bba64de712f283f478f31cd38761201a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  loader: {fileID: 0}
+  apiKey: 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
+  model: gpt-3.5-turbo
+  openAiPrompt: Generate a procedural dungeon in JSON with rooms and connections.
+  generatedDungeon:
+    rooms: []
+    connections: []
+    powerups: []
+    objectives: []
 --- !u!1 &1385207781
 GameObject:
   m_ObjectHideFlags: 0
@@ -455,7 +558,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a0eef52fb867f764fa14a4251070dc1c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dungeonJson: {fileID: 4900000, guid: 76456fa5f6b832446873729509021b8e, type: 3}
+  dungeonJson: {fileID: 4900000, guid: bec5df60674ebdf4c80a539d52f2703e, type: 3}
 --- !u!114 &1385207783
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -506,3 +609,5 @@ SceneRoots:
   - {fileID: 410087041}
   - {fileID: 832575519}
   - {fileID: 1385207784}
+  - {fileID: 173908189}
+  - {fileID: 844399049}

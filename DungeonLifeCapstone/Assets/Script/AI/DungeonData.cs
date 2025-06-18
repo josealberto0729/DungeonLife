@@ -1,11 +1,12 @@
+using System.Collections.Generic;
 using UnityEngine;
 [System.Serializable]
 public class DungeonData
 {
-    public Room[] rooms;
-    public Powerup[] powerups;
-    public string[] objectives;
-    public Connection[] connections;
+    public List<Room> rooms;
+    public List<Connection> connections;
+    public List<Powerup> powerups;
+    public List<string> objectives;
 }
 [System.Serializable]
 public class Connection
@@ -24,9 +25,9 @@ public class Room
     public int width;
     public int height;
     public string type;
-    public Enemy[] enemies;
-    public Powerup[] powerups;
-    public Treasure[] treasures;
+    public List<Enemy> enemies;
+    public List<Powerup> powerups;
+    public List<Treasure> treasures;
 }
 
 [System.Serializable]
