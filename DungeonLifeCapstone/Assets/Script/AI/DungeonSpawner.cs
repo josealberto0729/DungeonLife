@@ -24,6 +24,9 @@ public class DungeonSpawner : MonoBehaviour
     public GameObject healthPowerupPrefab;
 
     public GameObject treasurePrefab;
+    public bool useRandomGeneration = false;
+    private HashSet<Vector2Int> occupiedPositions = new HashSet<Vector2Int>();
+
 
     void Start()
     {
@@ -45,9 +48,99 @@ public class DungeonSpawner : MonoBehaviour
         int seed = customSeed ?? System.DateTime.Now.Millisecond;
         Random.InitState(seed);
         Debug.Log("Seed used: " + seed);
-
-        GenerateDungeon();
+        if (useRandomGeneration)
+        {
+            GenerateRandomDungeonFromScratch();
+        }
+            GenerateDungeon();
     }
+
+    public void GenerateRandomDungeonFromScratch(int roomCount = 8)
+    {
+        DungeonData dungeon = new DungeonData
+        {
+            rooms = new List<Room>(),
+            connections = new List<Connection>(),
+            powerups = new List<Powerup>(),
+            objectives = new List<string> { "Defeat the boss", "Find the treasure" }
+        };
+
+        HashSet<Vector2Int> usedPositions = new HashSet<Vector2Int>();
+
+        for (int i = 0; i < roomCount; i++)
+        {
+            Vector2Int pos;
+            do
+            {
+                pos = new Vector2Int(Random.Range(-5, 6), Random.Range(-5, 6));
+            } while (usedPositions.Contains(pos));
+            usedPositions.Add(pos);
+
+            string roomType = (i == 0) ? "spawn" :
+                              (i == roomCount - 1) ? "boss" :
+                              (Random.value < 0.2f) ? "treasure" :
+                              (Random.value < 0.1f) ? "shop" :
+                              "normal";
+
+            Room room = new Room
+            {
+                x = pos.x,
+                y = pos.y,
+                width = 1,
+                height = 1,
+                type = roomType,
+                enemies = new List<Enemy>(),
+                powerups = new List<Powerup>(),
+                treasures = new List<Treasure>()
+            };
+
+            int enemyCount = Random.Range(0, 3);
+            for (int j = 0; j < enemyCount; j++)
+            {
+                room.enemies.Add(new Enemy
+                {
+                    type = (Random.value > 0.5f) ? "melee" : "ranged"
+                });
+            }
+
+            if (Random.value < 0.3f)
+            {
+                room.powerups.Add(new Powerup
+                {
+                    x = Random.Range(0, 2),
+                    y = Random.Range(0, 2),
+                    type = (Random.value > 0.5f) ? "health" : "damage"
+                });
+            }
+
+            if (room.type == "treasure")
+            {
+                room.treasures.Add(new Treasure
+                {
+                    x = Random.Range(0, 2),
+                    y = Random.Range(0, 2)
+                });
+            }
+
+            dungeon.rooms.Add(room);
+        }
+
+        // Create simple connections between sequential rooms
+        for (int i = 0; i < dungeon.rooms.Count - 1; i++)
+        {
+            dungeon.connections.Add(new Connection
+            {
+                fromX = dungeon.rooms[i].x,
+                fromY = dungeon.rooms[i].y,
+                toX = dungeon.rooms[i + 1].x,
+                toY = dungeon.rooms[i + 1].y
+            });
+        }
+
+        loader.SetDungeonData(dungeon);
+        Debug.Log("Random JSON-style dungeon generated.");
+    }
+
 
     void GenerateCorridors(Connection[] connections)
     {
@@ -60,13 +153,43 @@ public class DungeonSpawner : MonoBehaviour
             while (current.x != end.x)
             {
                 current.x += (end.x > current.x) ? 1 : -1;
-                Instantiate(corridorTilePrefab, new Vector3(current.x * tileSize.x, current.y * tileSize.y, 0), Quaternion.identity);
+
+                if (!occupiedPositions.Contains(current))
+                {
+                    Vector3 pos = new Vector3(current.x * tileSize.x, current.y * tileSize.y, 0);
+                    GameObject corridorTile = Instantiate(corridorTilePrefab, pos, Quaternion.identity);
+
+                    TrySpawnCorridorEnemy(pos, corridorTile.transform);
+                }
             }
 
             while (current.y != end.y)
             {
                 current.y += (end.y > current.y) ? 1 : -1;
-                Instantiate(corridorTilePrefab, new Vector3(current.x * tileSize.x, current.y * tileSize.y, 0), Quaternion.identity);
+
+                if (!occupiedPositions.Contains(current))
+                {
+                    Vector3 pos = new Vector3(current.x * tileSize.x, current.y * tileSize.y, 0);
+                    GameObject corridorTile = Instantiate(corridorTilePrefab, pos, Quaternion.identity);
+
+                    TrySpawnCorridorEnemy(pos, corridorTile.transform);
+                }
+            }
+        }
+    }
+
+
+    void TrySpawnCorridorEnemy(Vector3 position, Transform parent)
+    {
+        float spawnChance = 0.15f; // 15% chance to spawn enemy in corridor tile
+
+        if (Random.value < spawnChance)
+        {
+            GameObject enemyPrefab = (Random.value > 0.5f) ? meleeEnemyPrefab : rangedEnemyPrefab;
+            if (enemyPrefab != null)
+            {
+                Vector3 spawnPos = position + new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f), 0);
+                Instantiate(enemyPrefab, spawnPos, Quaternion.identity, parent);  // parent assigned here
             }
         }
     }
@@ -82,6 +205,14 @@ public class DungeonSpawner : MonoBehaviour
 
         foreach (Room room in data.rooms)
         {
+            Vector2Int roomGridPos = new Vector2Int(room.x, room.y);
+            if (occupiedPositions.Contains(roomGridPos))
+            {
+                Debug.LogWarning($"Room at {roomGridPos} already instantiated. Skipping.");
+                continue;
+            }
+            occupiedPositions.Add(roomGridPos);
+
             Vector3 roomPos = new Vector3(room.x * tileSize.x, room.y * tileSize.y, 0);
             GameObject roomPrefab = GetRoomPrefab(room.type);
 

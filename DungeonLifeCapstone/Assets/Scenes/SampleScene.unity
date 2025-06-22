@@ -491,7 +491,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &844399049
 Transform:
   m_ObjectHideFlags: 0
@@ -514,7 +514,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 844399047}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: bba64de712f283f478f31cd38761201a, type: 3}
   m_Name: 
@@ -577,7 +577,7 @@ MonoBehaviour:
   normalRoomPrefab: {fileID: 1645482502123220, guid: 89c34bf03e751b346b5b806a385f7ed9, type: 3}
   treasureRoomPrefab: {fileID: 1645482502123220, guid: 89c34bf03e751b346b5b806a385f7ed9, type: 3}
   bossRoomPrefab: {fileID: 1645482502123220, guid: 89c34bf03e751b346b5b806a385f7ed9, type: 3}
-  corridorTilePrefab: {fileID: 1645482502123220, guid: 89c34bf03e751b346b5b806a385f7ed9, type: 3}
+  corridorTilePrefab: {fileID: 1645482502123220, guid: 8a3413dd19cedc9488a09f4bdf4fb947, type: 3}
   shopRoomPrefab: {fileID: 1645482502123220, guid: 89c34bf03e751b346b5b806a385f7ed9, type: 3}
   meleeEnemyPrefab: {fileID: 4279802846746209650, guid: 06410c5b26b87b441940d7ef2703111a, type: 3}
   rangedEnemyPrefab: {fileID: 840261188983404116, guid: e8b0a1194692aeb4b82e8ab37e8ed135, type: 3}
@@ -586,6 +586,7 @@ MonoBehaviour:
   speedPowerupPrefab: {fileID: 5990368126397749294, guid: a19370f3099b5db4188223f24a95e8e7, type: 3}
   healthPowerupPrefab: {fileID: 4554805147581745855, guid: 845f5626da386ea4e83acf87f85e456e, type: 3}
   treasurePrefab: {fileID: 2059674290478143238, guid: d7aa75633ad7d5746b8811c55e52e53e, type: 3}
+  useRandomGeneration: 1
 --- !u!4 &1385207784
 Transform:
   m_ObjectHideFlags: 0
