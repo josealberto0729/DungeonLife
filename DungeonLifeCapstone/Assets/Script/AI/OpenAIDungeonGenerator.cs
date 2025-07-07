@@ -31,9 +31,13 @@ public class OpenAIDungeonGenerator : MonoBehaviour
 
     void Start()
     {
-        StartCoroutine(GenerateDungeonFromOpenAI());
+        
     }
 
+    public void CallGenerateNewJson()
+    {
+        StartCoroutine(GenerateDungeonFromOpenAI());
+    }
     public IEnumerator GenerateDungeonFromOpenAI()
     {
         if (loader == null)
