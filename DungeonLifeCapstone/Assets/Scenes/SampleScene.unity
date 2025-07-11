@@ -1140,9 +1140,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   loader: {fileID: 0}
-  apiKey: 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
+  apiKey: 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
   model: gpt-3.5-turbo
-  openAiPrompt: Generate a procedural dungeon in JSON with rooms and connections.
+  openAiPrompt: "Generate a JSON object representing a dungeon map for a 2D game.
+    The object should contain a list of rooms and a list of connections. Each room
+    must have:\n\nx, y, width, height,\n\na type which must be one of the following:
+    spawn, normal, shop, treasure, or boss,\n\noptional arrays: enemies, powerups,
+    and treasures.\n\nEnemy objects (if present) must have:\n\ntype which is one
+    of: melee, ranged, or boss,\n\nand a patrolRadius (integer \u2265 0).\n\nPowerup
+    objects (if present) must have:\n\ntype which is one of: damage, speed, or health,\n\nand
+    their x, y coordinates within the room.\n\nTreasure objects (if present) must
+    have:\n\ntype which is either gold or artifact,\n\nand x, y coordinates within
+    the room.\n\nConnections must be defined as a list of objects with:\n\nfromX,
+    fromY, toX, toY indicating which rooms are linked.\n\nEnsure the layout is connected
+    and traversable from the spawn room to the boss room. Use between 7 to 10 rooms
+    total.\""
   generatedDungeon:
     rooms: []
     connections: []

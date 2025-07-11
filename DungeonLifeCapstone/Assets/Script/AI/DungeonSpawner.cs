@@ -216,7 +216,7 @@ public class DungeonSpawner : MonoBehaviour
                         Instantiate(treasurePrefab, treasurePos, Quaternion.identity, roomObj.transform);
                 }
 
-                if (room.type == "spawn" && playerPrefab != null)
+                if (room.type == "spawn" && playerPrefab != null && player == null)
                 {
                     player = Instantiate(playerPrefab, roomPos, Quaternion.identity);
                 }
@@ -348,5 +348,19 @@ public class DungeonSpawner : MonoBehaviour
         int nextRoomCount = Random.Range(8, 12);
         GenerateRandomDungeonFromScratch(nextRoomCount);
         GenerateDungeon();
+        if (player != null)
+        {
+            // Find spawn room's position
+            Room spawnRoom = loader.GetDungeonData().rooms.Find(r => r.type == "spawn");
+            if (spawnRoom != null)
+            {
+                Vector3 newPosition = new Vector3(spawnRoom.x * tileSize.x, spawnRoom.y * tileSize.y, 0);
+                player.transform.position = newPosition;
+            }
+            else
+            {
+                Debug.LogWarning("Spawn room not found in next level!");
+            }
+        }
     }
 }
