@@ -3,131 +3,187 @@
     {
       "x": 0,
       "y": 0,
-      "width": 2,
-      "height": 2,
+      "width": 1,
+      "height": 1,
       "type": "spawn",
       "enemies": [],
       "powerups": [],
       "treasures": []
     },
     {
-      "x": 4,
+      "x": 1,
       "y": 0,
-      "width": 2,
-      "height": 2,
+      "width": 1,
+      "height": 1,
       "type": "normal",
-      "enemies": [
-        {
-          "type": "ranged",
-          "patrolRadius": 2
-        }
-      ],
+      "enemies": [ { "type": "ranged" } ],
       "powerups": [],
       "treasures": []
     },
     {
-      "x": 6,
-      "y": 3,
-      "width": 2,
-      "height": 2,
-      "type": "shop",
-      "enemies": [],
+      "x": 2,
+      "y": 0,
+      "width": 1,
+      "height": 1,
+      "type": "normal",
+      "enemies": [ { "type": "melee" } ],
       "powerups": [
         {
-          "type": "speed",
-          "x": 7,
-          "y": 4
+          "type": "damage",
+          "x": 0,
+          "y": 0
         }
       ],
+      "treasures": []
+    },
+    {
+      "x": 2,
+      "y": 1,
+      "width": 1,
+      "height": 1,
+      "type": "boss",
+      "enemies": [ { "type": "boss" } ],
+      "powerups": [],
       "treasures": []
     },
     {
       "x": 1,
-      "y": 5,
-      "width": 2,
-      "height": 2,
+      "y": 1,
+      "width": 1,
+      "height": 1,
       "type": "normal",
-      "enemies": [
+      "enemies": [ { "type": "ranged" } ],
+      "powerups": [
         {
-          "type": "melee",
-          "patrolRadius": 1
-        },
-        {
-          "type": "melee",
-          "patrolRadius": 2
+          "type": "health",
+          "x": 0,
+          "y": 0
         }
       ],
+      "treasures": []
+    },
+    {
+      "x": 0,
+      "y": 1,
+      "width": 1,
+      "height": 1,
+      "type": "normal",
+      "enemies": [ { "type": "melee" } ],
       "powerups": [],
       "treasures": []
     },
     {
-      "x": 5,
-      "y": 7,
-      "width": 2,
-      "height": 2,
+      "x": -1,
+      "y": 1,
+      "width": 1,
+      "height": 1,
+      "type": "normal",
+      "enemies": [ { "type": "ranged" } ],
+      "powerups": [
+        {
+          "type": "speed",
+          "x": 0,
+          "y": 0
+        }
+      ],
+      "treasures": []
+    },
+    {
+      "x": -1,
+      "y": 0,
+      "width": 1,
+      "height": 1,
+      "type": "normal",
+      "enemies": [ { "type": "melee" } ],
+      "powerups": [],
+      "treasures": []
+    },
+    {
+      "x": -2,
+      "y": 0,
+      "width": 1,
+      "height": 1,
+      "type": "normal",
+      "enemies": [ { "type": "ranged" } ],
+      "powerups": [],
+      "treasures": []
+    },
+    {
+      "x": -2,
+      "y": -1,
+      "width": 1,
+      "height": 1,
       "type": "treasure",
       "enemies": [],
       "powerups": [],
       "treasures": [
         {
-          "type": "artifact",
-          "x": 6,
-          "y": 8
+          "type": "gold",
+          "x": 0,
+          "y": 0
         }
       ]
-    },
-    {
-      "x": 8,
-      "y": 7,
-      "width": 3,
-      "height": 3,
-      "type": "boss",
-      "enemies": [
-        {
-          "type": "boss",
-          "patrolRadius": 0
-        }
-      ],
-      "powerups": [
-        {
-          "type": "health",
-          "x": 9,
-          "y": 8
-        }
-      ],
-      "treasures": []
     }
   ],
   "connections": [
     {
       "fromX": 0,
       "fromY": 0,
-      "toX": 4,
+      "toX": 1,
       "toY": 0
     },
     {
-      "fromX": 4,
+      "fromX": 1,
       "fromY": 0,
-      "toX": 6,
-      "toY": 3
+      "toX": 2,
+      "toY": 0
     },
     {
-      "fromX": 6,
-      "fromY": 3,
+      "fromX": 2,
+      "fromY": 0,
+      "toX": 2,
+      "toY": 1
+    },
+    {
+      "fromX": 2,
+      "fromY": 0,
       "toX": 1,
-      "toY": 5
+      "toY": 1
     },
     {
       "fromX": 1,
-      "fromY": 5,
-      "toX": 5,
-      "toY": 7
+      "fromY": 1,
+      "toX": 0,
+      "toY": 1
     },
     {
-      "fromX": 5,
-      "fromY": 7,
-      "toX": 8,
-      "toY": 7
+      "fromX": 0,
+      "fromY": 1,
+      "toX": -1,
+      "toY": 1
+    },
+    {
+      "fromX": -1,
+      "fromY": 1,
+      "toX": -1,
+      "toY": 0
+    },
+    {
+      "fromX": -1,
+      "fromY": 0,
+      "toX": -2,
+      "toY": 0
+    },
+    {
+      "fromX": -2,
+      "fromY": 0,
+      "toX": -2,
+      "toY": -1
     }
+  ],
+  "objectives": [
+    "Explore every room in the dungeon.",
+    "Collect the gold from the treasure room.",
+    "Defeat the boss to complete your mission."
   ]
 }

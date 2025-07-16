@@ -77,7 +77,29 @@ public class DungeonSpawner : MonoBehaviour
         }
         GenerateDungeon();
     }
+    Vector2Int GetAdjacentFreePosition(HashSet<Vector2Int> used)
+    {
+        // Directions: up, down, left, right
+        Vector2Int[] directions = {
+        Vector2Int.up,
+        Vector2Int.down,
+        Vector2Int.left,
+        Vector2Int.right
+    };
 
+        foreach (Vector2Int existing in used)
+        {
+            foreach (Vector2Int dir in directions)
+            {
+                Vector2Int neighbor = existing + dir;
+                if (!used.Contains(neighbor))
+                    return neighbor;
+            }
+        }
+
+        // Fallback if all adjacent positions are taken (shouldn't happen with few rooms)
+        return new Vector2Int(Random.Range(-10, 10), Random.Range(-10, 10));
+    }
     public void GenerateRandomDungeonFromScratch(int roomCount = 8)
     {
         DungeonData dungeon = new DungeonData
@@ -92,11 +114,12 @@ public class DungeonSpawner : MonoBehaviour
 
         for (int i = 0; i < roomCount; i++)
         {
-            Vector2Int pos;
-            do
-            {
-                pos = new Vector2Int(Random.Range(-5, 6), Random.Range(-5, 6));
-            } while (usedPositions.Contains(pos));
+            //Vector2Int pos;
+            //do
+            //{
+            //    pos = new Vector2Int(Random.Range(-5, 6), Random.Range(-5, 6));
+            //} while (usedPositions.Contains(pos));
+            Vector2Int pos = (i == 0) ? Vector2Int.zero : GetAdjacentFreePosition(usedPositions);
             usedPositions.Add(pos);
 
             string roomType = (i == 0) ? "spawn" :
@@ -227,8 +250,8 @@ public class DungeonSpawner : MonoBehaviour
             }
         }
 
-        if (data.connections != null)
-            GenerateCorridors(data.connections.ToArray());
+        //if (data.connections != null)
+        //    GenerateCorridors(data.connections.ToArray());
 
         if (data.powerups != null)
         {
@@ -248,27 +271,27 @@ public class DungeonSpawner : MonoBehaviour
         }
     }
 
-    void GenerateCorridors(Connection[] connections)
-    {
-        foreach (var conn in connections)
-        {
-            Vector2Int start = new Vector2Int(conn.fromX, conn.fromY);
-            Vector2Int end = new Vector2Int(conn.toX, conn.toY);
-            Vector2Int current = start;
+    //void GenerateCorridors(Connection[] connections)
+    //{
+    //    foreach (var conn in connections)
+    //    {
+    //        Vector2Int start = new Vector2Int(conn.fromX, conn.fromY);
+    //        Vector2Int end = new Vector2Int(conn.toX, conn.toY);
+    //        Vector2Int current = start;
 
-            while (current.x != end.x)
-            {
-                current.x += (end.x > current.x) ? 1 : -1;
-                TryPlaceCorridorTile(current);
-            }
+    //        while (current.x != end.x)
+    //        {
+    //            current.x += (end.x > current.x) ? 1 : -1;
+    //            TryPlaceCorridorTile(current);
+    //        }
 
-            while (current.y != end.y)
-            {
-                current.y += (end.y > current.y) ? 1 : -1;
-                TryPlaceCorridorTile(current);
-            }
-        }
-    }
+    //        while (current.y != end.y)
+    //        {
+    //            current.y += (end.y > current.y) ? 1 : -1;
+    //            TryPlaceCorridorTile(current);
+    //        }
+    //    }
+    //}
 
     void TryPlaceCorridorTile(Vector2Int position)
     {

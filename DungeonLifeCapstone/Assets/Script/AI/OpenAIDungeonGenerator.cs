@@ -17,27 +17,25 @@ public class OpenAIDungeonGenerator : MonoBehaviour
     public string model = "gpt-3.5-turbo";
 
     [TextArea(3, 10)]
-    public string openAiPrompt = "Given the dungeon format below, generate a new variation with similar structure and randomized content. Return ONLY valid JSON with 'rooms' and 'connections'. No explanation, no markdown.";
+    public string openAiPrompt = "You are a game level generator. Given an example dungeon JSON, generate an ALL NEW layout and content in the same format. DO NOT copy, repeat, or minimally change the input. Change all coordinates, room types, connections, and contents. Output ONLY valid JSON (no explanation, no markdown) with only the fields: 'rooms', 'connections', and optionally 'objectives'.";
 
+    public bool useBaseJsonAsExample = false;  // Toggle whether to send the base JSON (schema) for few-shot, or not.
     public DungeonData generatedDungeon;
 
     void Awake()
     {
         if (loader == null)
-        {
             loader = FindObjectOfType<DungeonLoader>();
-        }
     }
 
-    void Start()
-    {
-        
-    }
-
+    /// <summary>
+    /// Call this to generate a new random dungeon via OpenAI.
+    /// </summary>
     public void CallGenerateNewJson()
     {
         StartCoroutine(GenerateDungeonFromOpenAI());
     }
+
     public IEnumerator GenerateDungeonFromOpenAI()
     {
         if (loader == null)
@@ -47,20 +45,38 @@ public class OpenAIDungeonGenerator : MonoBehaviour
         }
 
         string baseJson = loader.dungeonJson != null ? loader.dungeonJson.text : null;
+        string userPrompt;
 
-        string prompt = string.IsNullOrEmpty(baseJson)
-            ? $"{openAiPrompt} Output only JSON."
-            : $"{openAiPrompt}\n\nBase JSON:\n{baseJson}\n\nOnly return JSON with the fields: rooms[], connections[]. No extra text.";
+        if (useBaseJsonAsExample && !string.IsNullOrEmpty(baseJson))
+        {
+            userPrompt = $"{openAiPrompt}\n\n" +
+                         "BASE JSON FORMAT EXAMPLE (FOR FORMATTING *ONLY*, DO NOT COPY ANY DATA):\n" +
+                         baseJson +
+                         "\n\nNow, generate an ALL NEW, fully random dungeon layout in this format. Change ALL positions, room types, connections, monsters, powerups, and treasures. " +
+                         "Do not copy or mutate the input, generate a different, unique, and RANDOM dungeon. " +
+                         "Output ONLY valid JSON with the fields: 'rooms', 'connections', and 'objectives'. Do NOT explain or use markdown formatting. Minimize similarity to the input.";
+        }
+        else
+        {
+            userPrompt = openAiPrompt + "\nGenerate a new, unique, random dungeon layout as valid JSON, following the last rules (and format, if shown above).";
+        }
 
         var requestData = new
         {
             model = model,
             messages = new[]
             {
-                new { role = "system", content = "Given a dungeon JSON format with rooms that have x, y, width, height, type, enemies (type, patrolRadius), powerups (type, x, y), treasures (type, x, y), and connections between rooms, generate a new, unique dungeon map with randomized values and a fully connected layout.\r\n\r\nRooms must not overlap. Each room's position and size must be chosen so no two rooms share any grid space.\r\n\r\nReturn ONLY valid JSON with 'rooms' and 'connections' arrays. Do NOT repeat the example values.\r\n" },
-                new { role = "user", content = prompt }
+                new {
+                    role = "system",
+                    content =
+                    "You are an expert procedural generator. " +
+                    "When prompted, you must generate a random dungeon as valid JSON ONLY, with a compact grid, non-overlapping rooms, and each room's content, type, and position randomized every request. " +
+                    "NEVER repeat or copy previous examples. " +
+                    "ALWAYS make each generation unique and all values newly chosen."
+                },
+                new { role = "user", content = userPrompt }
             },
-            temperature = 1.0
+            temperature = 1.0 // More random!
         };
 
         string jsonBody = JsonConvert.SerializeObject(requestData);
@@ -124,7 +140,7 @@ public class OpenAIDungeonGenerator : MonoBehaviour
         {
             return input.Substring(firstBrace, lastBrace - firstBrace + 1);
         }
-        return input; // fallback
+        return input.Trim(); // fallback
     }
 }
 

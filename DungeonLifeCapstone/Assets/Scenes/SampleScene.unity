@@ -1139,22 +1139,30 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bba64de712f283f478f31cd38761201a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  loader: {fileID: 0}
-  apiKey: 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
+  loader: {fileID: 1385207782}
+  apiKey: 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
   model: gpt-3.5-turbo
-  openAiPrompt: "Generate a JSON object representing a dungeon map for a 2D game.
-    The object should contain a list of rooms and a list of connections. Each room
-    must have:\n\nx, y, width, height,\n\na type which must be one of the following:
-    spawn, normal, shop, treasure, or boss,\n\noptional arrays: enemies, powerups,
-    and treasures.\n\nEnemy objects (if present) must have:\n\ntype which is one
-    of: melee, ranged, or boss,\n\nand a patrolRadius (integer \u2265 0).\n\nPowerup
-    objects (if present) must have:\n\ntype which is one of: damage, speed, or health,\n\nand
-    their x, y coordinates within the room.\n\nTreasure objects (if present) must
-    have:\n\ntype which is either gold or artifact,\n\nand x, y coordinates within
-    the room.\n\nConnections must be defined as a list of objects with:\n\nfromX,
-    fromY, toX, toY indicating which rooms are linked.\n\nEnsure the layout is connected
-    and traversable from the spawn room to the boss room. Use between 7 to 10 rooms
-    total.\""
+  openAiPrompt: "Generate a randomized dungeon as a valid JSON object with the following
+    fixed structure:\n\nTop-level keys: \"rooms\", \"connections\", and \"objectives\".\n\nROOMS\n\"rooms\"
+    is an array of 8 to 12 rooms. Each room must include:\n\njson\nCopy\nEdit\n{\n 
+    \"x\": number,\n  \"y\": number,\n  \"width\": 1,\n  \"height\": 1,\n  \"type\":
+    \"spawn\" | \"boss\" | \"treasure\" | \"normal\",\n  \"enemies\": [ { \"type\":
+    \"melee\" | \"ranged\" | \"boss\" } ],\n  \"powerups\": [ { \"type\": \"health\"
+    | \"damage\" | \"speed\", \"x\": 0, \"y\": 0 } ],\n  \"treasures\": [ { \"type\":
+    \"gold\", \"x\": 0, \"y\": 0 } ]\n}\nAll rooms must have unique (x, y) positions
+    on a 2D grid.\n\nAll rooms must be connected via adjacency (no diagonals or isolated
+    rooms).\n\nspawn room: no enemies, powerups, or treasures.\n\nboss room: exactly
+    one enemy of type \"boss\", no powerups or treasures.\n\ntreasure room: exactly
+    one treasure of type \"gold\", no enemies or powerups.\n\nAll other rooms are
+    \"normal\" and must:\n\nContain at least one \"melee\" or \"ranged\" enemy.\n\nHave
+    a 50% chance to include one powerup.\n\nHave no treasures.\n\nCONNECTIONS\n\"connections\"
+    is an array of objects:\n\njson\nCopy\nEdit\n{ \"fromX\": number, \"fromY\":
+    number, \"toX\": number, \"toY\": number }\nEach connection must link two adjacent
+    rooms (difference of 1 in x or y).\n\nAll rooms must be fully reachable (no isolated
+    rooms).\n\nOBJECTIVES\n\"objectives\" is an array of 3 unique strings describing
+    player goals, like:\n\n\"Defeat all enemies\"\n\n\"Collect the treasure\"\n\n\"Defeat
+    the boss\"\n\n\u2705 Output valid JSON only, no explanation, and use the exact
+    field names and structure shown above."
   generatedDungeon:
     rooms: []
     connections: []
@@ -1323,7 +1331,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a0eef52fb867f764fa14a4251070dc1c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dungeonJson: {fileID: 4900000, guid: bec5df60674ebdf4c80a539d52f2703e, type: 3}
+  dungeonJson: {fileID: 4900000, guid: 70c00fa4c132f44468a372da4bd9259d, type: 3}
 --- !u!114 &1385207783
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1338,10 +1346,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   loader: {fileID: 1385207782}
   tileSize: {x: 5, y: 5}
-  spawnRoomPrefab: {fileID: 1645482502123220, guid: 89c34bf03e751b346b5b806a385f7ed9, type: 3}
-  normalRoomPrefab: {fileID: 1645482502123220, guid: 89c34bf03e751b346b5b806a385f7ed9, type: 3}
+  spawnRoomPrefab: {fileID: 1645482502123220, guid: 8a3413dd19cedc9488a09f4bdf4fb947, type: 3}
+  normalRoomPrefab: {fileID: 1645482502123220, guid: 40243f351290c6c46af4d44b583c5430, type: 3}
   treasureRoomPrefab: {fileID: 1645482502123220, guid: 89c34bf03e751b346b5b806a385f7ed9, type: 3}
-  bossRoomPrefab: {fileID: 1645482502123220, guid: 89c34bf03e751b346b5b806a385f7ed9, type: 3}
+  bossRoomPrefab: {fileID: 1645482502123220, guid: 987e020c70b9f50449b1733365d1e65f, type: 3}
   corridorTilePrefab: {fileID: 1645482502123220, guid: 8a3413dd19cedc9488a09f4bdf4fb947, type: 3}
   shopRoomPrefab: {fileID: 1645482502123220, guid: 89c34bf03e751b346b5b806a385f7ed9, type: 3}
   meleeEnemyPrefab: {fileID: 4279802846746209650, guid: 06410c5b26b87b441940d7ef2703111a, type: 3}
