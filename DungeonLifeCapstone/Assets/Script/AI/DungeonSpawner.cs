@@ -214,29 +214,45 @@ public class DungeonSpawner : MonoBehaviour
             {
                 GameObject roomObj = Instantiate(roomPrefab, roomPos, Quaternion.identity, transform);
 
-                foreach (Enemy enemy in room.enemies)
+                foreach (Enemy enemy in room.enemies ?? new List<Enemy>())
                 {
-                    float offsetX = Random.Range(-tileSize.x * 0.4f, tileSize.x * 0.4f);
-                    float offsetY = Random.Range(-tileSize.y * 0.4f, tileSize.y * 0.4f);
-                    Vector3 enemyPos = roomPos + new Vector3(offsetX, offsetY, 0);
                     GameObject enemyPrefab = GetEnemyPrefab(enemy.type);
                     if (enemyPrefab != null)
-                        Instantiate(enemyPrefab, enemyPos, Quaternion.identity, roomObj.transform);
+                    {
+                        Vector3 offset = new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f), 0); // optional scatter
+                        Instantiate(enemyPrefab, roomPos + offset, Quaternion.identity, transform);
+                    }
+                    else
+                    {
+                        Debug.LogWarning($"Enemy prefab not found for type: {enemy.type}");
+                    }
                 }
 
-                foreach (Powerup powerup in room.powerups)
+                foreach (Powerup powerup in room.powerups ?? new List<Powerup>())
                 {
-                    Vector3 powerupPos = roomPos + new Vector3(powerup.x * tileSize.x, powerup.y * tileSize.y, 0);
                     GameObject powerupPrefab = GetPowerupPrefab(powerup.type);
                     if (powerupPrefab != null)
-                        Instantiate(powerupPrefab, powerupPos, Quaternion.identity, roomObj.transform);
+                    {
+                        Vector3 offset = new Vector3(powerup.x, powerup.y, 0);
+                        Instantiate(powerupPrefab, roomPos + offset, Quaternion.identity, roomObj.transform);
+                    }
+                    else
+                    {
+                        Debug.LogWarning($"Powerup prefab not found for type: {powerup.type}");
+                    }
                 }
 
-                foreach (Treasure treasure in room.treasures)
+                foreach (Treasure treasure in room.treasures ?? new List<Treasure>())
                 {
-                    Vector3 treasurePos = roomPos + new Vector3(treasure.x * tileSize.x, treasure.y * tileSize.y, 0);
                     if (treasurePrefab != null)
-                        Instantiate(treasurePrefab, treasurePos, Quaternion.identity, roomObj.transform);
+                    {
+                        Vector3 offset = new Vector3(treasure.x, treasure.y, 0);
+                        Instantiate(treasurePrefab, roomPos + offset, Quaternion.identity, roomObj.transform);
+                    }
+                    else
+                    {
+                        Debug.LogWarning("Treasure prefab not assigned!");
+                    }
                 }
 
                 if (room.type == "spawn" && playerPrefab != null && player == null)

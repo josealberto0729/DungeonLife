@@ -1163,6 +1163,7 @@ MonoBehaviour:
     player goals, like:\n\n\"Defeat all enemies\"\n\n\"Collect the treasure\"\n\n\"Defeat
     the boss\"\n\n\u2705 Output valid JSON only, no explanation, and use the exact
     field names and structure shown above."
+  useBaseJsonAsExample: 0
   generatedDungeon:
     rooms: []
     connections: []
@@ -1331,7 +1332,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a0eef52fb867f764fa14a4251070dc1c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dungeonJson: {fileID: 4900000, guid: 70c00fa4c132f44468a372da4bd9259d, type: 3}
+  dungeonJson: {fileID: 4900000, guid: bec5df60674ebdf4c80a539d52f2703e, type: 3}
 --- !u!114 &1385207783
 MonoBehaviour:
   m_ObjectHideFlags: 0
