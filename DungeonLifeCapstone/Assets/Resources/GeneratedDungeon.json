@@ -1,88 +1,35 @@
 {
-    "rooms": [
-        {
-            "x": 1,
-            "y": 1,
-            "width": 1,
-            "height": 1,
-            "type": "spawn",
-            "enemies": [],
-            "powerups": [],
-            "treasures": []
-        },
-        {
-            "x": 2,
-            "y": 1,
-            "width": 1,
-            "height": 1,
-            "type": "normal",
-            "enemies": [
-                { "type": "melee" }
-            ],
-            "powerups": [
-                { "type": "health", "x": 0, "y": 0 }
-            ],
-            "treasures": []
-        },
-        {
-            "x": 1,
-            "y": 2,
-            "width": 1,
-            "height": 1,
-            "type": "boss",
-            "enemies": [
-                { "type": "boss" }
-            ],
-            "powerups": [],
-            "treasures": []
-        },
-        {
-            "x": 2,
-            "y": 2,
-            "width": 1,
-            "height": 1,
-            "type": "normal",
-            "enemies": [
-                { "type": "ranged" }
-            ],
-            "powerups": [],
-            "treasures": []
-        },
-        {
-            "x": 3,
-            "y": 2,
-            "width": 1,
-            "height": 1,
-            "type": "normal",
-            "enemies": [
-                { "type": "melee" }
-            ],
-            "powerups": [],
-            "treasures": []
-        },
-        {
-            "x": 3,
-            "y": 3,
-            "width": 1,
-            "height": 1,
-            "type": "treasure",
-            "enemies": [],
-            "powerups": [],
-            "treasures": [
-                { "type": "gold", "x": 0, "y": 0 }
-            ]
-        }
-    ],
-    "connections": [
-        { "fromX": 1, "fromY": 1, "toX": 2, "toY": 1 },
-        { "fromX": 1, "fromY": 1, "toX": 1, "toY": 2 },
-        { "fromX": 1, "fromY": 2, "toX": 2, "toY": 2 },
-        { "fromX": 2, "fromY": 1, "toX": 3, "toY": 2 },
-        { "fromX": 2, "fromY": 2, "toX": 3, "toY": 3 }
-    ],
-    "objectives": [
-        "Defeat the boss",
-        "Defeat all enemies",
-        "Collect the treasure"
-    ]
+  "rooms": [
+    { "x": 0, "y": 0, "width": 1, "height": 1, "type": "spawn", "enemies": [], "powerups": [], "treasures": [] },
+    { "x": 1, "y": 0, "width": 1, "height": 1, "type": "normal", "enemies": [ { "type": "ranged" } ], "powerups": [ { "type": "damage", "x": 0, "y": 0 } ], "treasures": [] },
+    { "x": 2, "y": 0, "width": 1, "height": 1, "type": "normal", "enemies": [], "powerups": [], "treasures": [] },
+    { "x": 2, "y": 1, "width": 1, "height": 1, "type": "normal", "enemies": [ { "type": "melee" } ], "powerups": [ { "type": "health", "x": 0, "y": 0 } ], "treasures": [] },
+    { "x": 3, "y": 1, "width": 1, "height": 1, "type": "normal", "enemies": [ { "type": "melee" }, { "type": "ranged" } ], "powerups": [], "treasures": [] },
+    { "x": 3, "y": 0, "width": 1, "height": 1, "type": "boss", "enemies": [ { "type": "boss" } ], "powerups": [], "treasures": [] },
+    { "x": 1, "y": -1, "width": 1, "height": 1, "type": "normal", "enemies": [ { "type": "melee" } ], "powerups": [], "treasures": [] },
+    { "x": 0, "y": -1, "width": 1, "height": 1, "type": "normal", "enemies": [ { "type": "melee" } ], "powerups": [], "treasures": [] },
+    { "x": 0, "y": -2, "width": 1, "height": 1, "type": "normal", "enemies": [ { "type": "ranged" } ], "powerups": [], "treasures": [] },
+    { "x": -1, "y": -2, "width": 1, "height": 1, "type": "normal", "enemies": [ { "type": "ranged" } ], "powerups": [], "treasures": [] },
+    { "x": -2, "y": -2, "width": 1, "height": 1, "type": "normal", "enemies": [ { "type": "melee" } ], "powerups": [], "treasures": [] },
+    { "x": -3, "y": -2, "width": 1, "height": 1, "type": "treasure", "enemies": [], "powerups": [], "treasures": [ { "type": "gold", "x": 0, "y": 0 } ] },
+    { "x": -3, "y": -1, "width": 1, "height": 1, "type": "normal", "enemies": [ { "type": "melee" } ], "powerups": [], "treasures": [] }
+  ],
+  "connections": [
+    { "fromX": 0, "fromY": 0, "toX": 1, "toY": 0 },
+    { "fromX": 1, "fromY": 0, "toX": 2, "toY": 0 },
+    { "fromX": 2, "fromY": 0, "toX": 2, "toY": 1 },
+    { "fromX": 2, "fromY": 1, "toX": 3, "toY": 1 },
+    { "fromX": 3, "fromY": 1, "toX": 3, "toY": 0 },
+    { "fromX": 1, "fromY": 0, "toX": 1, "toY": -1 },
+    { "fromX": 0, "fromY": 0, "toX": 0, "toY": -1 },
+    { "fromX": 0, "fromY": -1, "toX": -1, "toY": -1 },
+    { "fromX": -1, "fromY": -1, "toX": -2, "toY": -1 },
+    { "fromX": -2, "fromY": -1, "toX": -3, "toY": -1 },
+    { "fromX": -3, "fromY": -1, "toX": -3, "toY": -2 }
+  ],
+  "objectives": [
+    "Defeat all enemies",
+    "Find the treasure",
+    "Survive the boss battle"
+  ]
 }

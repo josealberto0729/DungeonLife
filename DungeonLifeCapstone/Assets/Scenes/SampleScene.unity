@@ -1140,29 +1140,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   loader: {fileID: 1385207782}
-  apiKey: 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
+  apiKey: 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
   model: gpt-3.5-turbo
-  openAiPrompt: "Generate a randomized dungeon as a valid JSON object with the following
-    fixed structure:\n\nTop-level keys: \"rooms\", \"connections\", and \"objectives\".\n\nROOMS\n\"rooms\"
-    is an array of 8 to 12 rooms. Each room must include:\n\njson\nCopy\nEdit\n{\n 
-    \"x\": number,\n  \"y\": number,\n  \"width\": 1,\n  \"height\": 1,\n  \"type\":
-    \"spawn\" | \"boss\" | \"treasure\" | \"normal\",\n  \"enemies\": [ { \"type\":
-    \"melee\" | \"ranged\" | \"boss\" } ],\n  \"powerups\": [ { \"type\": \"health\"
-    | \"damage\" | \"speed\", \"x\": 0, \"y\": 0 } ],\n  \"treasures\": [ { \"type\":
-    \"gold\", \"x\": 0, \"y\": 0 } ]\n}\nAll rooms must have unique (x, y) positions
-    on a 2D grid.\n\nAll rooms must be connected via adjacency (no diagonals or isolated
-    rooms).\n\nspawn room: no enemies, powerups, or treasures.\n\nboss room: exactly
-    one enemy of type \"boss\", no powerups or treasures.\n\ntreasure room: exactly
-    one treasure of type \"gold\", no enemies or powerups.\n\nAll other rooms are
-    \"normal\" and must:\n\nContain at least one \"melee\" or \"ranged\" enemy.\n\nHave
-    a 50% chance to include one powerup.\n\nHave no treasures.\n\nCONNECTIONS\n\"connections\"
-    is an array of objects:\n\njson\nCopy\nEdit\n{ \"fromX\": number, \"fromY\":
-    number, \"toX\": number, \"toY\": number }\nEach connection must link two adjacent
-    rooms (difference of 1 in x or y).\n\nAll rooms must be fully reachable (no isolated
-    rooms).\n\nOBJECTIVES\n\"objectives\" is an array of 3 unique strings describing
-    player goals, like:\n\n\"Defeat all enemies\"\n\n\"Collect the treasure\"\n\n\"Defeat
-    the boss\"\n\n\u2705 Output valid JSON only, no explanation, and use the exact
-    field names and structure shown above."
+  promptFileName: DungeonPrompt
   useBaseJsonAsExample: 0
   generatedDungeon:
     rooms: []

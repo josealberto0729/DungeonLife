@@ -10,7 +10,7 @@ public class OpenAIDungeonGeneratorEditor : Editor
 
         OpenAIDungeonGenerator generator = (OpenAIDungeonGenerator)target;
 
-        generator.openAiPrompt = EditorGUILayout.TextArea(generator.openAiPrompt, GUILayout.Height(60));
+        generator.promptFileName = EditorGUILayout.TextArea(generator.promptFileName, GUILayout.Height(60));
         generator.apiKey = EditorGUILayout.PasswordField("API Key", generator.apiKey);
         generator.model = EditorGUILayout.TextField("Model", generator.model);
 

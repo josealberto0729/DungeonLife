@@ -16,8 +16,11 @@ public class OpenAIDungeonGenerator : MonoBehaviour
     public string apiKey = "";
     public string model = "gpt-3.5-turbo";
 
-    [TextArea(3, 10)]
-    public string openAiPrompt = "Generate a randomized dungeon as a valid JSON object with the following fixed structure:\r\n\r\nTop-level keys: \"rooms\", \"connections\", and \"objectives\".\r\n\r\nROOMS\r\n\"rooms\" is an array of 8 to 12 rooms. Each room must include:\r\n\r\njson\r\nCopy\r\nEdit\r\n{\r\n  \"x\": number,\r\n  \"y\": number,\r\n  \"width\": 1,\r\n  \"height\": 1,\r\n  \"type\": \"spawn\" | \"boss\" | \"treasure\" | \"normal\",\r\n  \"enemies\": [ { \"type\": \"melee\" | \"ranged\" | \"boss\" } ],\r\n  \"powerups\": [ { \"type\": \"health\" | \"damage\" | \"speed\", \"x\": 0, \"y\": 0 } ],\r\n  \"treasures\": [ { \"type\": \"gold\", \"x\": 0, \"y\": 0 } ]\r\n}\r\nAll rooms must have unique (x, y) positions on a 2D grid.\r\n\r\nAll rooms must be connected via adjacency (no diagonals or isolated rooms).\r\n\r\nspawn room: no enemies, powerups, or treasures.\r\n\r\nboss room: exactly one enemy of type \"boss\", no powerups or treasures.\r\n\r\ntreasure room: exactly one treasure of type \"gold\", no enemies or powerups.\r\n\r\nAll other rooms are \"normal\" and must:\r\n\r\nContain at least one \"melee\" or \"ranged\" enemy.\r\n\r\nHave a 50% chance to include one powerup.\r\n\r\nHave no treasures.\r\n\r\nCONNECTIONS\r\n\"connections\" is an array of objects:\r\n\r\njson\r\nCopy\r\nEdit\r\n{ \"fromX\": number, \"fromY\": number, \"toX\": number, \"toY\": number }\r\nEach connection must link two adjacent rooms (difference of 1 in x or y).\r\n\r\nAll rooms must be fully reachable (no isolated rooms).\r\n\r\nOBJECTIVES\r\n\"objectives\" is an array of 3 unique strings describing player goals, like:\r\n\r\n\"Defeat all enemies\"\r\n\r\n\"Collect the treasure\"\r\n\r\n\"Defeat the boss\"\r\n\r\n✅ Output valid JSON only, no explanation, and use the exact field names and structure shown above.";
+    //[TextArea(3, 10)]
+    //public string openAiPrompt = "Generate a randomized dungeon as a valid JSON object with the following fixed structure:\r\n\r\nTop-level keys: \"rooms\", \"connections\", and \"objectives\".\r\n\r\nROOMS\r\n\"rooms\" is an array of 8 to 12 rooms. Each room must include:\r\n\r\njson\r\nCopy\r\nEdit\r\n{\r\n  \"x\": number,\r\n  \"y\": number,\r\n  \"width\": 1,\r\n  \"height\": 1,\r\n  \"type\": \"spawn\" | \"boss\" | \"treasure\" | \"normal\",\r\n  \"enemies\": [ { \"type\": \"melee\" | \"ranged\" | \"boss\" } ],\r\n  \"powerups\": [ { \"type\": \"health\" | \"damage\" | \"speed\", \"x\": 0, \"y\": 0 } ],\r\n  \"treasures\": [ { \"type\": \"gold\", \"x\": 0, \"y\": 0 } ]\r\n}\r\nAll rooms must have unique (x, y) positions on a 2D grid.\r\n\r\nAll rooms must be connected via adjacency (no diagonals or isolated rooms).\r\n\r\nspawn room: no enemies, powerups, or treasures.\r\n\r\nboss room: exactly one enemy of type \"boss\", no powerups or treasures.\r\n\r\ntreasure room: exactly one treasure of type \"gold\", no enemies or powerups.\r\n\r\nAll other rooms are \"normal\" and must:\r\n\r\nContain at least one \"melee\" or \"ranged\" enemy.\r\n\r\nHave a 50% chance to include one powerup.\r\n\r\nHave no treasures.\r\n\r\nCONNECTIONS\r\n\"connections\" is an array of objects:\r\n\r\njson\r\nCopy\r\nEdit\r\n{ \"fromX\": number, \"fromY\": number, \"toX\": number, \"toY\": number }\r\nEach connection must link two adjacent rooms (difference of 1 in x or y).\r\n\r\nAll rooms must be fully reachable (no isolated rooms).\r\n\r\nOBJECTIVES\r\n\"objectives\" is an array of 3 unique strings describing player goals, like:\r\n\r\n\"Defeat all enemies\"\r\n\r\n\"Collect the treasure\"\r\n\r\n\"Defeat the boss\"\r\n\r\n✅ Output valid JSON only, no explanation, and use the exact field names and structure shown above.";
+    [Tooltip("Name of the .txt prompt file in Resources (without extension)")]
+    public string promptFileName = "DungeonPrompt";
+    private string loadedPrompt;
 
     public bool useBaseJsonAsExample = false;  // Toggle whether to send the base JSON (schema) for few-shot, or not.
     public DungeonData generatedDungeon;
@@ -25,7 +28,19 @@ public class OpenAIDungeonGenerator : MonoBehaviour
     void Awake()
     {
         if (loader == null)
-            loader = FindObjectOfType<DungeonLoader>();
+            loader = FindFirstObjectByType<DungeonLoader>();
+
+        // Load prompt from Resources/DungeonPrompt.txt
+        TextAsset promptFile = Resources.Load<TextAsset>(promptFileName);
+        if (promptFile != null)
+        {
+            loadedPrompt = promptFile.text;
+        }
+        else
+        {
+            Debug.LogError("Prompt file not found in Resources!");
+            loadedPrompt = "";
+        }
     }
 
     /// <summary>
@@ -49,16 +64,19 @@ public class OpenAIDungeonGenerator : MonoBehaviour
 
         if (useBaseJsonAsExample && !string.IsNullOrEmpty(baseJson))
         {
-            userPrompt = $"{openAiPrompt}\n\n" +
-                         "BASE JSON FORMAT EXAMPLE (FOR FORMATTING *ONLY*, DO NOT COPY ANY DATA):\n" +
-                         baseJson +
-                         "\n\nNow, generate an ALL NEW, fully random dungeon layout in this format. Change ALL positions, room types, connections, monsters, powerups, and treasures. " +
-                         "Do not copy or mutate the input, generate a different, unique, and RANDOM dungeon. " +
-                         "Output ONLY valid JSON with the fields: 'rooms', 'connections', and 'objectives'. Do NOT explain or use markdown formatting. Minimize similarity to the input.";
+            userPrompt = loadedPrompt + "\nGenerate a new, unique, random dungeon layout...";
+            //userPrompt = $"{openAiPrompt}\n\n" +
+            //             "BASE JSON FORMAT EXAMPLE (FOR FORMATTING *ONLY*, DO NOT COPY ANY DATA):\n" +
+            //             baseJson +
+            //             "\n\nNow, generate an ALL NEW, fully random dungeon layout in this format. Change ALL positions, room types, connections, monsters, powerups, and treasures. " +
+            //             "Do not copy or mutate the input, generate a different, unique, and RANDOM dungeon. " +
+            //             "Output ONLY valid JSON with the fields: 'rooms', 'connections', and 'objectives'. Do NOT explain or use markdown formatting. Minimize similarity to the input.";
         }
         else
         {
-            userPrompt = openAiPrompt + "\nGenerate a new, unique, random dungeon layout as valid JSON, following the last rules (and format, if shown above).";
+            userPrompt = loadedPrompt + "\nGenerate a new, unique, random dungeon layout as valid JSON, following the last rules (and format, if shown above).";
+
+            //userPrompt = openAiPrompt + "\nGenerate a new, unique, random dungeon layout as valid JSON, following the last rules (and format, if shown above).";
         }
 
         var requestData = new
