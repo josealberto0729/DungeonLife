@@ -16,6 +16,8 @@ public class DungeonSpawner : MonoBehaviour
     public GameObject corridorTilePrefab;
     public GameObject shopRoomPrefab;
 
+    public GameObject doorPrefab; // <- NEW: Assign this in the Inspector
+
     public GameObject meleeEnemyPrefab;
     public GameObject rangedEnemyPrefab;
     public GameObject bossEnemyPrefab;
@@ -31,6 +33,7 @@ public class DungeonSpawner : MonoBehaviour
     public bool useRandomGeneration = false;
 
     private HashSet<Vector2Int> occupiedPositions = new HashSet<Vector2Int>();
+    private Dictionary<Vector2Int, GameObject> roomGameObjects = new Dictionary<Vector2Int, GameObject>(); // <- NEW
 
     private void Awake()
     {
@@ -43,10 +46,6 @@ public class DungeonSpawner : MonoBehaviour
         Instance = this;
         DontDestroyOnLoad(gameObject);
     }
-    void Start()
-    {
-
-    }
 
     public void CreateDungeon()
     {
@@ -56,7 +55,6 @@ public class DungeonSpawner : MonoBehaviour
             return;
         }
 
-        // Set tile size from corridor prefab
         if (corridorTilePrefab != null)
         {
             tileSize = GetFullPrefabSize(corridorTilePrefab);
@@ -68,38 +66,152 @@ public class DungeonSpawner : MonoBehaviour
         Debug.Log("Seed used: " + seed);
 
         if (useRandomGeneration)
-        {
             GenerateRandomDungeonFromScratch();
-        }
         else
-        {
-            loader.GetDungeonData(); // no file extension
-        }
+            loader.GetDungeonData();
+
         GenerateDungeon();
     }
-    Vector2Int GetAdjacentFreePosition(HashSet<Vector2Int> used)
-    {
-        // Directions: up, down, left, right
-        Vector2Int[] directions = {
-        Vector2Int.up,
-        Vector2Int.down,
-        Vector2Int.left,
-        Vector2Int.right
-    };
 
-        foreach (Vector2Int existing in used)
+    void GenerateDungeon()
+    {
+        DungeonData data = loader.GetDungeonData();
+        if (data == null)
         {
-            foreach (Vector2Int dir in directions)
+            Debug.LogError("Dungeon data is null!");
+            return;
+        }
+
+        roomGameObjects.Clear();
+
+        foreach (Room room in data.rooms)
+        {
+            Vector2Int roomGridPos = new Vector2Int(room.x, room.y);
+            if (occupiedPositions.Contains(roomGridPos)) continue;
+
+            occupiedPositions.Add(roomGridPos);
+
+            Vector3 roomPos = new Vector3(room.x * tileSize.x, room.y * tileSize.y, 0);
+            GameObject roomPrefab = GetRoomPrefab(room.type);
+
+            if (roomPrefab != null)
             {
-                Vector2Int neighbor = existing + dir;
-                if (!used.Contains(neighbor))
-                    return neighbor;
+                GameObject roomObj = Instantiate(roomPrefab, roomPos, Quaternion.identity, transform);
+                roomGameObjects.Add(roomGridPos, roomObj); // <- Track room object
+
+                // Enemies
+                foreach (Enemy enemy in room.enemies ?? new List<Enemy>())
+                {
+                    GameObject enemyPrefab = GetEnemyPrefab(enemy.type);
+                    if (enemyPrefab != null)
+                    {
+                        Vector3 offset = new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f), 0);
+                        GameObject enemyObj = Instantiate(enemyPrefab, roomPos + offset, Quaternion.identity, transform);
+
+                        EnemyAI enemyAI = enemyObj.GetComponent<EnemyAI>();
+                        if (enemyAI != null)
+                        {
+                            Vector2[] patrolPoints = new Vector2[3];
+                            float patrolRangeX = tileSize.x * room.width / 2f;
+                            float patrolRangeY = tileSize.y * room.height / 2f;
+                            for (int i = 0; i < patrolPoints.Length; i++)
+                            {
+                                float x = roomPos.x + Random.Range(-patrolRangeX, patrolRangeX);
+                                float y = roomPos.y + Random.Range(-patrolRangeY, patrolRangeY);
+                                patrolPoints[i] = new Vector2(x, y);
+                            }
+                            enemyAI.SetPatrolPoints(patrolPoints);
+                        }
+                    }
+                }
+
+                // Powerups
+                foreach (Powerup powerup in room.powerups ?? new List<Powerup>())
+                {
+                    GameObject powerupPrefab = GetPowerupPrefab(powerup.type);
+                    if (powerupPrefab != null)
+                    {
+                        Vector3 offset = new Vector3(powerup.x, powerup.y, 0);
+                        Instantiate(powerupPrefab, roomPos + offset, Quaternion.identity, roomObj.transform);
+                    }
+                }
+
+                // Treasures
+                foreach (Treasure treasure in room.treasures ?? new List<Treasure>())
+                {
+                    if (treasurePrefab != null)
+                    {
+                        Vector3 offset = new Vector3(treasure.x, treasure.y, 0);
+                        Instantiate(treasurePrefab, roomPos + offset, Quaternion.identity, roomObj.transform);
+                    }
+                }
+
+                // Spawn Player
+                if (room.type == "spawn" && playerPrefab != null && player == null)
+                    player = Instantiate(playerPrefab, roomPos, Quaternion.identity);
             }
         }
 
-        // Fallback if all adjacent positions are taken (shouldn't happen with few rooms)
-        return new Vector2Int(Random.Range(-10, 10), Random.Range(-10, 10));
+        // 🔑 DOORS between connected rooms
+        foreach (Connection connection in data.connections)
+        {
+            Vector2Int from = new Vector2Int(connection.fromX, connection.fromY);
+            Vector2Int to = new Vector2Int(connection.toX, connection.toY);
+
+            if (roomGameObjects.TryGetValue(from, out GameObject fromRoom) &&
+                roomGameObjects.TryGetValue(to, out GameObject toRoom))
+            {
+                Vector2Int dir = to - from;
+
+                if (dir == Vector2Int.right)
+                {
+                    SpawnDoor(fromRoom, "DoorRight");
+                    SpawnDoor(toRoom, "DoorLeft");
+                }
+                else if (dir == Vector2Int.left)
+                {
+                    SpawnDoor(fromRoom, "DoorLeft");
+                    SpawnDoor(toRoom, "DoorRight");
+                }
+                else if (dir == Vector2Int.up)
+                {
+                    SpawnDoor(fromRoom, "DoorTop");
+                    SpawnDoor(toRoom, "DoorBottom");
+                }
+                else if (dir == Vector2Int.down)
+                {
+                    SpawnDoor(fromRoom, "DoorBottom");
+                    SpawnDoor(toRoom, "DoorTop");
+                }
+            }
+        }
+
+        // Global powerups (if any)
+        foreach (Powerup powerup in data.powerups ?? new List<Powerup>())
+        {
+            Vector3 powerupPos = new Vector3(powerup.x * tileSize.x, 0, powerup.y * tileSize.y);
+            GameObject powerupPrefab = GetPowerupPrefab(powerup.type);
+            if (powerupPrefab != null)
+                Instantiate(powerupPrefab, powerupPos, Quaternion.identity);
+        }
+
+        foreach (string obj in data.objectives ?? new List<string>())
+            Debug.Log("Objective: " + obj);
     }
+
+    void SpawnDoor(GameObject roomObj, string doorPointName)
+    {
+        Transform doorPoint = roomObj.transform.Find(doorPointName);
+        if (doorPoint != null && doorPrefab != null)
+        {
+            Instantiate(doorPrefab, doorPoint.position, doorPoint.rotation, roomObj.transform);
+        }
+        else
+        {
+            Debug.LogWarning($"Missing door point {doorPointName} or doorPrefab not assigned.");
+        }
+    }
+
     public void GenerateRandomDungeonFromScratch(int roomCount = 8)
     {
         DungeonData dungeon = new DungeonData
@@ -191,164 +303,28 @@ public class DungeonSpawner : MonoBehaviour
         Debug.Log("Random JSON-style dungeon generated.");
     }
 
-    void GenerateDungeon()
+    Vector2Int GetAdjacentFreePosition(HashSet<Vector2Int> used)
     {
-        DungeonData data = loader.GetDungeonData();
-        if (data == null)
+        // Directions: up, down, left, right
+        Vector2Int[] directions = {
+        Vector2Int.up,
+        Vector2Int.down,
+        Vector2Int.left,
+        Vector2Int.right
+    };
+
+        foreach (Vector2Int existing in used)
         {
-            Debug.LogError("Dungeon data is null!");
-            return;
-        }
-
-        foreach (Room room in data.rooms)
-        {
-            Vector2Int roomGridPos = new Vector2Int(room.x, room.y);
-            if (occupiedPositions.Contains(roomGridPos)) continue;
-
-            occupiedPositions.Add(roomGridPos);
-
-            Vector3 roomPos = new Vector3(room.x * tileSize.x, room.y * tileSize.y, 0);
-            GameObject roomPrefab = GetRoomPrefab(room.type);
-
-            if (roomPrefab != null)
+            foreach (Vector2Int dir in directions)
             {
-                GameObject roomObj = Instantiate(roomPrefab, roomPos, Quaternion.identity, transform);
-
-                foreach (Enemy enemy in room.enemies ?? new List<Enemy>())
-                {
-                    GameObject enemyPrefab = GetEnemyPrefab(enemy.type);
-                    if (enemyPrefab != null)
-                    {
-                        Vector3 offset = new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f), 0); // optional scatter
-                        Instantiate(enemyPrefab, roomPos + offset, Quaternion.identity, transform);
-                    }
-                    else
-                    {
-                        Debug.LogWarning($"Enemy prefab not found for type: {enemy.type}");
-                    }
-                }
-
-                foreach (Powerup powerup in room.powerups ?? new List<Powerup>())
-                {
-                    GameObject powerupPrefab = GetPowerupPrefab(powerup.type);
-                    if (powerupPrefab != null)
-                    {
-                        Vector3 offset = new Vector3(powerup.x, powerup.y, 0);
-                        Instantiate(powerupPrefab, roomPos + offset, Quaternion.identity, roomObj.transform);
-                    }
-                    else
-                    {
-                        Debug.LogWarning($"Powerup prefab not found for type: {powerup.type}");
-                    }
-                }
-
-                foreach (Treasure treasure in room.treasures ?? new List<Treasure>())
-                {
-                    if (treasurePrefab != null)
-                    {
-                        Vector3 offset = new Vector3(treasure.x, treasure.y, 0);
-                        Instantiate(treasurePrefab, roomPos + offset, Quaternion.identity, roomObj.transform);
-                    }
-                    else
-                    {
-                        Debug.LogWarning("Treasure prefab not assigned!");
-                    }
-                }
-
-                if (room.type == "spawn" && playerPrefab != null && player == null)
-                {
-                    player = Instantiate(playerPrefab, roomPos, Quaternion.identity);
-                }
-            }
-            else
-            {
-                Debug.LogWarning($"Room prefab not found for type: {room.type}");
+                Vector2Int neighbor = existing + dir;
+                if (!used.Contains(neighbor))
+                    return neighbor;
             }
         }
 
-        //if (data.connections != null)
-        //    GenerateCorridors(data.connections.ToArray());
-
-        if (data.powerups != null)
-        {
-            foreach (Powerup powerup in data.powerups)
-            {
-                Vector3 powerupPos = new Vector3(powerup.x * tileSize.x, 0, powerup.y * tileSize.y);
-                GameObject powerupPrefab = GetPowerupPrefab(powerup.type);
-                if (powerupPrefab != null)
-                    Instantiate(powerupPrefab, powerupPos, Quaternion.identity);
-            }
-        }
-
-        if (data.objectives != null)
-        {
-            foreach (string obj in data.objectives)
-                Debug.Log("Objective: " + obj);
-        }
-    }
-
-    //void GenerateCorridors(Connection[] connections)
-    //{
-    //    foreach (var conn in connections)
-    //    {
-    //        Vector2Int start = new Vector2Int(conn.fromX, conn.fromY);
-    //        Vector2Int end = new Vector2Int(conn.toX, conn.toY);
-    //        Vector2Int current = start;
-
-    //        while (current.x != end.x)
-    //        {
-    //            current.x += (end.x > current.x) ? 1 : -1;
-    //            TryPlaceCorridorTile(current);
-    //        }
-
-    //        while (current.y != end.y)
-    //        {
-    //            current.y += (end.y > current.y) ? 1 : -1;
-    //            TryPlaceCorridorTile(current);
-    //        }
-    //    }
-    //}
-
-    void TryPlaceCorridorTile(Vector2Int position)
-    {
-        if (occupiedPositions.Add(position))
-        {
-            Vector3 worldPos = new Vector3(position.x * tileSize.x, position.y * tileSize.y, 0);
-            GameObject corridorTile = Instantiate(corridorTilePrefab, worldPos, Quaternion.identity, transform);
-            TrySpawnCorridorEnemy(worldPos, corridorTile.transform);
-        }
-    }
-
-    void TrySpawnCorridorEnemy(Vector3 position, Transform parent)
-    {
-        if (Random.value < 0.15f)
-        {
-            GameObject enemyPrefab = (Random.value > 0.5f) ? meleeEnemyPrefab : rangedEnemyPrefab;
-            if (enemyPrefab != null)
-            {
-                Vector3 offset = new Vector3(Random.Range(-0.3f, 0.3f), Random.Range(-0.3f, 0.3f), 0);
-                Instantiate(enemyPrefab, position + offset, Quaternion.identity, parent);
-            }
-        }
-    }
-
-    Vector2 GetFullPrefabSize(GameObject prefab)
-    {
-        GameObject temp = Instantiate(prefab);
-        Renderer[] renderers = temp.GetComponentsInChildren<Renderer>();
-
-        if (renderers.Length == 0)
-        {
-            Destroy(temp);
-            return Vector2.one;
-        }
-
-        Bounds bounds = renderers[0].bounds;
-        for (int i = 1; i < renderers.Length; i++)
-            bounds.Encapsulate(renderers[i].bounds);
-
-        Destroy(temp);
-        return new Vector2(bounds.size.x, bounds.size.y);
+        // Fallback if all adjacent positions are taken (shouldn't happen with few rooms)
+        return new Vector2Int(Random.Range(-10, 10), Random.Range(-10, 10));
     }
 
     GameObject GetRoomPrefab(string type) => type.ToLower() switch
@@ -383,23 +359,39 @@ public class DungeonSpawner : MonoBehaviour
             Destroy(child.gameObject);
 
         occupiedPositions.Clear();
+        roomGameObjects.Clear();
+
         Random.InitState(System.DateTime.Now.Millisecond);
         int nextRoomCount = Random.Range(8, 12);
         GenerateRandomDungeonFromScratch(nextRoomCount);
         GenerateDungeon();
+
         if (player != null)
         {
-            // Find spawn room's position
             Room spawnRoom = loader.GetDungeonData().rooms.Find(r => r.type == "spawn");
             if (spawnRoom != null)
             {
                 Vector3 newPosition = new Vector3(spawnRoom.x * tileSize.x, spawnRoom.y * tileSize.y, 0);
                 player.transform.position = newPosition;
             }
-            else
-            {
-                Debug.LogWarning("Spawn room not found in next level!");
-            }
         }
+    }
+
+    Vector2 GetFullPrefabSize(GameObject prefab)
+    {
+        GameObject temp = Instantiate(prefab);
+        Renderer[] renderers = temp.GetComponentsInChildren<Renderer>();
+        if (renderers.Length == 0)
+        {
+            Destroy(temp);
+            return Vector2.one;
+        }
+
+        Bounds bounds = renderers[0].bounds;
+        for (int i = 1; i < renderers.Length; i++)
+            bounds.Encapsulate(renderers[i].bounds);
+
+        Destroy(temp);
+        return new Vector2(bounds.size.x, bounds.size.y);
     }
 }
