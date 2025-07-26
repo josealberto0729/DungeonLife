@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class DungeonSpawner : MonoBehaviour
 {
@@ -33,7 +34,7 @@ public class DungeonSpawner : MonoBehaviour
     public bool useRandomGeneration = false;
 
     private HashSet<Vector2Int> occupiedPositions = new HashSet<Vector2Int>();
-    private Dictionary<Vector2Int, GameObject> roomGameObjects = new Dictionary<Vector2Int, GameObject>(); // <- NEW
+    public Dictionary<Vector2Int, GameObject> roomGameObjects = new Dictionary<Vector2Int, GameObject>(); // <- NEW
 
     private void Awake()
     {
@@ -204,7 +205,25 @@ public class DungeonSpawner : MonoBehaviour
         Transform doorPoint = roomObj.transform.Find(doorPointName);
         if (doorPoint != null && doorPrefab != null)
         {
-            Instantiate(doorPrefab, doorPoint.position, doorPoint.rotation, roomObj.transform);
+            GameObject door = Instantiate(doorPrefab, doorPoint.position, doorPoint.rotation, roomObj.transform);
+
+            DoorPortal portal = door.AddComponent<DoorPortal>();
+
+            // Parse room grid position from dictionary
+            foreach (var kvp in roomGameObjects)
+            {
+                if (kvp.Value == roomObj)
+                {
+                    portal.roomGridPosition = kvp.Key;
+                    break;
+                }
+            }
+
+            // Assign direction based on doorPointName
+            if (doorPointName.Contains("Right")) portal.direction = "Right";
+            else if (doorPointName.Contains("Left")) portal.direction = "Left";
+            else if (doorPointName.Contains("Top")) portal.direction = "Top";
+            else if (doorPointName.Contains("Bottom")) portal.direction = "Bottom";
         }
         else
         {

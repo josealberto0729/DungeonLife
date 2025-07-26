@@ -378,7 +378,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_ComponentVersion: 1
-  m_AssetsPPU: 60
+  m_AssetsPPU: 30
   m_RefResolutionX: 320
   m_RefResolutionY: 180
   m_CropFrame: 0
@@ -424,7 +424,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 1.5
+  orthographic size: 3
   m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
@@ -1327,12 +1327,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   loader: {fileID: 1385207782}
   tileSize: {x: 5, y: 5}
-  spawnRoomPrefab: {fileID: 1645482502123220, guid: 8a3413dd19cedc9488a09f4bdf4fb947, type: 3}
-  normalRoomPrefab: {fileID: 1645482502123220, guid: 40243f351290c6c46af4d44b583c5430, type: 3}
-  treasureRoomPrefab: {fileID: 1645482502123220, guid: 89c34bf03e751b346b5b806a385f7ed9, type: 3}
+  spawnRoomPrefab: {fileID: 1645482502123220, guid: 987e020c70b9f50449b1733365d1e65f, type: 3}
+  normalRoomPrefab: {fileID: 1645482502123220, guid: 987e020c70b9f50449b1733365d1e65f, type: 3}
+  treasureRoomPrefab: {fileID: 1645482502123220, guid: 987e020c70b9f50449b1733365d1e65f, type: 3}
   bossRoomPrefab: {fileID: 1645482502123220, guid: 987e020c70b9f50449b1733365d1e65f, type: 3}
-  corridorTilePrefab: {fileID: 1645482502123220, guid: 8a3413dd19cedc9488a09f4bdf4fb947, type: 3}
-  shopRoomPrefab: {fileID: 1645482502123220, guid: 89c34bf03e751b346b5b806a385f7ed9, type: 3}
+  corridorTilePrefab: {fileID: 1645482502123220, guid: 987e020c70b9f50449b1733365d1e65f, type: 3}
+  shopRoomPrefab: {fileID: 1645482502123220, guid: 987e020c70b9f50449b1733365d1e65f, type: 3}
+  doorPrefab: {fileID: 903076981341627035, guid: 1d6ff5ec92bab744da738c8fa75fd082, type: 3}
   meleeEnemyPrefab: {fileID: 4279802846746209650, guid: 06410c5b26b87b441940d7ef2703111a, type: 3}
   rangedEnemyPrefab: {fileID: 840261188983404116, guid: e8b0a1194692aeb4b82e8ab37e8ed135, type: 3}
   bossEnemyPrefab: {fileID: 4034295282541716241, guid: 65622276a3f68c44680bcc64e6e2d345, type: 3}
