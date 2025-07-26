@@ -17,10 +17,10 @@ public class PatrolState : EnemyState
             enemy.currentPatrolIndex = (enemy.currentPatrolIndex + 1) % enemy.patrolPoints.Length;
         }
 
-        if (enemy.IsPlayerInRange(enemy.detectionRange))
-        {
-            enemy.TransitionToState(new ChaseState());
-        }
+        //if (enemy.IsPlayerInRange(enemy.detectionRange))
+        //{
+        //    enemy.TransitionToState(new ChaseState());
+        //}
     }
 
     public override void FixedUpdateState(EnemyAI enemy)

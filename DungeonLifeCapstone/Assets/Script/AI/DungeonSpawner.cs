@@ -107,7 +107,9 @@ public class DungeonSpawner : MonoBehaviour
                     if (enemyPrefab != null)
                     {
                         Vector3 offset = new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f), 0);
-                        GameObject enemyObj = Instantiate(enemyPrefab, roomPos + offset, Quaternion.identity, transform);
+                        //GameObject enemyObj = Instantiate(enemyPrefab, roomPos + offset, Quaternion.identity, transform);
+                        GameObject enemyObj = Instantiate(enemyPrefab, roomPos + offset, Quaternion.identity, roomObj.transform);
+
 
                         EnemyAI enemyAI = enemyObj.GetComponent<EnemyAI>();
                         if (enemyAI != null)

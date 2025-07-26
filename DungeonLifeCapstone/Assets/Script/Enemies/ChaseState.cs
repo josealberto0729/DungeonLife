@@ -9,11 +9,11 @@ public class ChaseState : EnemyState
 
     public override void UpdateState(EnemyAI enemy)
     {
-        if (!enemy.IsPlayerInRange(enemy.detectionRange))
-        {
-            enemy.TransitionToState(new PatrolState());
-        }
-        else if (enemy.IsPlayerInRange(enemy.attackRange))
+        //if (!enemy.IsPlayerInRange(enemy.detectionRange))
+        //{
+        //    enemy.TransitionToState(new PatrolState());
+        //}
+        if (enemy.IsPlayerInRange(enemy.attackRange))
         {
             enemy.TransitionToState(new AttackState());
         }
