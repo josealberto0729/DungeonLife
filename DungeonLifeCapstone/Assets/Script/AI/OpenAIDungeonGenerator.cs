@@ -15,6 +15,8 @@ public class OpenAIDungeonGenerator : MonoBehaviour
     public DungeonLoader loader;
     public string apiKey = "";
     public string model = "gpt-3.5-turbo";
+    public int minRoom;
+    public int maxRoom;
 
     //[TextArea(3, 10)]
     //public string openAiPrompt = "Generate a randomized dungeon as a valid JSON object with the following fixed structure:\r\n\r\nTop-level keys: \"rooms\", \"connections\", and \"objectives\".\r\n\r\nROOMS\r\n\"rooms\" is an array of 8 to 12 rooms. Each room must include:\r\n\r\njson\r\nCopy\r\nEdit\r\n{\r\n  \"x\": number,\r\n  \"y\": number,\r\n  \"width\": 1,\r\n  \"height\": 1,\r\n  \"type\": \"spawn\" | \"boss\" | \"treasure\" | \"normal\",\r\n  \"enemies\": [ { \"type\": \"melee\" | \"ranged\" | \"boss\" } ],\r\n  \"powerups\": [ { \"type\": \"health\" | \"damage\" | \"speed\", \"x\": 0, \"y\": 0 } ],\r\n  \"treasures\": [ { \"type\": \"gold\", \"x\": 0, \"y\": 0 } ]\r\n}\r\nAll rooms must have unique (x, y) positions on a 2D grid.\r\n\r\nAll rooms must be connected via adjacency (no diagonals or isolated rooms).\r\n\r\nspawn room: no enemies, powerups, or treasures.\r\n\r\nboss room: exactly one enemy of type \"boss\", no powerups or treasures.\r\n\r\ntreasure room: exactly one treasure of type \"gold\", no enemies or powerups.\r\n\r\nAll other rooms are \"normal\" and must:\r\n\r\nContain at least one \"melee\" or \"ranged\" enemy.\r\n\r\nHave a 50% chance to include one powerup.\r\n\r\nHave no treasures.\r\n\r\nCONNECTIONS\r\n\"connections\" is an array of objects:\r\n\r\njson\r\nCopy\r\nEdit\r\n{ \"fromX\": number, \"fromY\": number, \"toX\": number, \"toY\": number }\r\nEach connection must link two adjacent rooms (difference of 1 in x or y).\r\n\r\nAll rooms must be fully reachable (no isolated rooms).\r\n\r\nOBJECTIVES\r\n\"objectives\" is an array of 3 unique strings describing player goals, like:\r\n\r\n\"Defeat all enemies\"\r\n\r\n\"Collect the treasure\"\r\n\r\n\"Defeat the boss\"\r\n\r\n✅ Output valid JSON only, no explanation, and use the exact field names and structure shown above.";
@@ -22,7 +24,7 @@ public class OpenAIDungeonGenerator : MonoBehaviour
     public string promptFileName = "DungeonPrompt";
     private string loadedPrompt;
 
-    public bool useBaseJsonAsExample = false;  // Toggle whether to send the base JSON (schema) for few-shot, or not.
+    public bool useBaseJsonAsExample = false;
     public DungeonData generatedDungeon;
 
     void Awake()
@@ -64,7 +66,8 @@ public class OpenAIDungeonGenerator : MonoBehaviour
 
         if (useBaseJsonAsExample && !string.IsNullOrEmpty(baseJson))
         {
-            userPrompt = loadedPrompt + "\nGenerate a new, unique, random dungeon layout...";
+            userPrompt = loadedPrompt + "\nGenerate a new, unique, random dungeon layout";
+            Debug.Log(userPrompt);
             //userPrompt = $"{openAiPrompt}\n\n" +
             //             "BASE JSON FORMAT EXAMPLE (FOR FORMATTING *ONLY*, DO NOT COPY ANY DATA):\n" +
             //             baseJson +

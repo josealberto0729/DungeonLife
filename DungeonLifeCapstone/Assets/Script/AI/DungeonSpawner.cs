@@ -66,10 +66,10 @@ public class DungeonSpawner : MonoBehaviour
         Random.InitState(seed);
         Debug.Log("Seed used: " + seed);
 
-        if (useRandomGeneration)
-            GenerateRandomDungeonFromScratch();
-        else
-            loader.GetDungeonData();
+        //if (useRandomGeneration)
+        //    GenerateRandomDungeonFromScratch();
+        //else
+        loader.GetDungeonData();
 
         GenerateDungeon();
     }
@@ -233,96 +233,96 @@ public class DungeonSpawner : MonoBehaviour
         }
     }
 
-    public void GenerateRandomDungeonFromScratch(int roomCount = 8)
-    {
-        DungeonData dungeon = new DungeonData
-        {
-            rooms = new List<Room>(),
-            connections = new List<Connection>(),
-            powerups = new List<Powerup>(),
-            objectives = new List<string> { "Defeat the boss", "Find the treasure" }
-        };
+    //public void GenerateRandomDungeonFromScratch(int roomCount = 8)
+    //{
+    //    DungeonData dungeon = new DungeonData
+    //    {
+    //        rooms = new List<Room>(),
+    //        connections = new List<Connection>(),
+    //        powerups = new List<Powerup>(),
+    //        objectives = new List<string> { "Defeat the boss", "Find the treasure" }
+    //    };
 
-        HashSet<Vector2Int> usedPositions = new HashSet<Vector2Int>();
+    //    HashSet<Vector2Int> usedPositions = new HashSet<Vector2Int>();
 
-        for (int i = 0; i < roomCount; i++)
-        {
-            //Vector2Int pos;
-            //do
-            //{
-            //    pos = new Vector2Int(Random.Range(-5, 6), Random.Range(-5, 6));
-            //} while (usedPositions.Contains(pos));
-            Vector2Int pos = (i == 0) ? Vector2Int.zero : GetAdjacentFreePosition(usedPositions);
-            usedPositions.Add(pos);
+    //    for (int i = 0; i < roomCount; i++)
+    //    {
+    //        //Vector2Int pos;
+    //        //do
+    //        //{
+    //        //    pos = new Vector2Int(Random.Range(-5, 6), Random.Range(-5, 6));
+    //        //} while (usedPositions.Contains(pos));
+    //        Vector2Int pos = (i == 0) ? Vector2Int.zero : GetAdjacentFreePosition(usedPositions);
+    //        usedPositions.Add(pos);
 
-            string roomType = (i == 0) ? "spawn" :
-                              (i == roomCount - 1) ? "boss" :
-                              (Random.value < 0.2f) ? "treasure" :
-                              (Random.value < 0.1f) ? "shop" :
-                              "normal";
+    //        string roomType = (i == 0) ? "spawn" :
+    //                          (i == roomCount - 1) ? "boss" :
+    //                          (Random.value < 0.2f) ? "treasure" :
+    //                          (Random.value < 0.1f) ? "shop" :
+    //                          "normal";
 
-            Room room = new Room
-            {
-                x = pos.x,
-                y = pos.y,
-                width = 1,
-                height = 1,
-                type = roomType,
-                enemies = new List<Enemy>(),
-                powerups = new List<Powerup>(),
-                treasures = new List<Treasure>()
-            };
+    //        Room room = new Room
+    //        {
+    //            x = pos.x,
+    //            y = pos.y,
+    //            width = 1,
+    //            height = 1,
+    //            type = roomType,
+    //            enemies = new List<Enemy>(),
+    //            powerups = new List<Powerup>(),
+    //            treasures = new List<Treasure>()
+    //        };
 
-            if (room.type == "boss")
-                room.enemies.Add(new Enemy { type = "boss" });
-            else
-            {
-                int enemyCount = Random.Range(0, 3);
-                for (int j = 0; j < enemyCount; j++)
-                {
-                    room.enemies.Add(new Enemy
-                    {
-                        type = (Random.value > 0.5f) ? "melee" : "ranged"
-                    });
-                }
-            }
+    //        if (room.type == "boss")
+    //            room.enemies.Add(new Enemy { type = "boss" });
+    //        else
+    //        {
+    //            int enemyCount = Random.Range(0, 3);
+    //            for (int j = 0; j < enemyCount; j++)
+    //            {
+    //                room.enemies.Add(new Enemy
+    //                {
+    //                    type = (Random.value > 0.5f) ? "melee" : "ranged"
+    //                });
+    //            }
+    //        }
 
-            if (Random.value < 0.3f)
-            {
-                room.powerups.Add(new Powerup
-                {
-                    x = Random.Range(0, 2),
-                    y = Random.Range(0, 2),
-                    type = (Random.value > 0.5f) ? "health" : "damage"
-                });
-            }
+    //        if (Random.value < 0.3f)
+    //        {
+    //            room.powerups.Add(new Powerup
+    //            {
+    //                x = Random.Range(0, 2),
+    //                y = Random.Range(0, 2),
+    //                type = (Random.value > 0.5f) ? "health" : "damage"
+    //            });
+    //        }
 
-            if (room.type == "treasure")
-            {
-                room.treasures.Add(new Treasure
-                {
-                    x = Random.Range(0, 2),
-                    y = Random.Range(0, 2)
-                });
-            }
+    //        if (room.type == "treasure")
+    //        {
+    //            room.treasures.Add(new Treasure
+    //            {
+    //                x = Random.Range(0, 2),
+    //                y = Random.Range(0, 2)
+    //            });
+    //        }
 
-            dungeon.rooms.Add(room);
-        }
+    //        dungeon.rooms.Add(room);
+    //    }
 
-        for (int i = 0; i < dungeon.rooms.Count - 1; i++)
-        {
-            dungeon.connections.Add(new Connection
-            {
-                fromX = dungeon.rooms[i].x,
-                fromY = dungeon.rooms[i].y,
-                toX = dungeon.rooms[i + 1].x,
-                toY = dungeon.rooms[i + 1].y
-            });
-        }
+    //    for (int i = 0; i < dungeon.rooms.Count - 1; i++)
+    //    {
+    //        dungeon.connections.Add(new Connection
+    //        {
+    //            fromX = dungeon.rooms[i].x,
+    //            fromY = dungeon.rooms[i].y,
+    //            toX = dungeon.rooms[i + 1].x,
+    //            toY = dungeon.rooms[i + 1].y
+    //        });
+    //    }
 
-        loader.SetDungeonData(dungeon);
-        Debug.Log("Random JSON-style dungeon generated.");
-    }
+    //    loader.SetDungeonData(dungeon);
+    //    Debug.Log("Random JSON-style dungeon generated.");
+    //}
 
     Vector2Int GetAdjacentFreePosition(HashSet<Vector2Int> used)
     {
@@ -384,7 +384,7 @@ public class DungeonSpawner : MonoBehaviour
 
         Random.InitState(System.DateTime.Now.Millisecond);
         int nextRoomCount = Random.Range(8, 12);
-        GenerateRandomDungeonFromScratch(nextRoomCount);
+        //GenerateRandomDungeonFromScratch(nextRoomCount);
         GenerateDungeon();
 
         if (player != null)

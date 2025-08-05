@@ -1140,8 +1140,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   loader: {fileID: 1385207782}
-  apiKey: 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
+  apiKey: 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
   model: gpt-3.5-turbo
+  minRoom: 20
+  maxRoom: 25
   promptFileName: DungeonPrompt
   useBaseJsonAsExample: 0
   generatedDungeon:
@@ -1343,7 +1345,7 @@ MonoBehaviour:
   treasurePrefab: {fileID: 2059674290478143238, guid: d7aa75633ad7d5746b8811c55e52e53e, type: 3}
   playerPrefab: {fileID: 5146457993561938553, guid: 2c9205eeebc750c40956f03cd3a36cf9, type: 3}
   player: {fileID: 0}
-  useRandomGeneration: 1
+  useRandomGeneration: 0
 --- !u!4 &1385207784
 Transform:
   m_ObjectHideFlags: 0

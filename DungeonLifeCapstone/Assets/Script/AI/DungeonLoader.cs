@@ -6,7 +6,6 @@ public class DungeonLoader : MonoBehaviour
     public TextAsset dungeonJson; 
     private DungeonData runtimeData; 
 
-    // Called by ProceduralDungeonGenerator
     public void SetDungeonData(DungeonData data)
     {
         runtimeData = data;

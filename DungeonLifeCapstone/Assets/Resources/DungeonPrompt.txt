@@ -1,23 +1,35 @@
 Creating a game in unity, you will always create a new json file that randomize the rooms location and pattern every time base on the JSON file below
-
 Output valid JSON only. Do not explain. Do not use markdown or code blocks. Output JSON with the exact structure and field names as described.
 
 {
   "rooms": [
     { "x": 0, "y": 0, "width": 1, "height": 1, "type": "spawn", "enemies": [], "powerups": [], "treasures": [] },
-    { "x": 1, "y": 0, "width": 1, "height": 1, "type": "normal", "enemies": [ { "type": "melee" } ], "powerups": [], "treasures": [] },
-    { "x": 1, "y": 1, "width": 1, "height": 1, "type": "normal", "enemies": [ { "type": "ranged" } ], "powerups": [ { "type": "damage", "x": 0, "y": 0 } ], "treasures": [] },
-    { "x": 2, "y": 1, "width": 1, "height": 1, "type": "normal", "enemies": [ { "type": "melee" } ], "powerups": [], "treasures": [] },
-    { "x": 2, "y": 2, "width": 1, "height": 1, "type": "normal", "enemies": [ { "type": "ranged" } ], "powerups": [ { "type": "health", "x": 0, "y": 0 } ], "treasures": [] },
+    { "x": 1, "y": 0, "width": 1, "height": 1, "type": "normal", "enemies": [ { "type": "melee" }, { "type": "ranged" }, { "type": "melee" } ], "powerups": [], "treasures": [] },
+    { "x": 1, "y": 1, "width": 1, "height": 1, "type": "normal", "enemies": [ { "type": "melee" }, { "type": "melee" }, { "type": "ranged" }, { "type": "melee" } ], "powerups": [ { "type": "speed", "x": 0, "y": 0 } ], "treasures": [] },
+    { "x": 2, "y": 1, "width": 1, "height": 1, "type": "normal", "enemies": [ { "type": "ranged" }, { "type": "ranged" }, { "type": "melee" } ], "powerups": [ { "type": "health", "x": 0, "y": 0 } ], "treasures": [] },
+    { "x": 2, "y": 2, "width": 1, "height": 1, "type": "normal", "enemies": [ { "type": "melee" }, { "type": "melee" }, { "type": "ranged" }, { "type": "melee" } ], "powerups": [], "treasures": [ { "type": "gold", "x": 0, "y": 0 } ] },
     { "x": 3, "y": 2, "width": 1, "height": 1, "type": "boss", "enemies": [ { "type": "boss" } ], "powerups": [], "treasures": [] },
-    { "x": 2, "y": 0, "width": 1, "height": 1, "type": "normal", "enemies": [ { "type": "melee" } ], "powerups": [], "treasures": [] },
-    { "x": 0, "y": 1, "width": 1, "height": 1, "type": "normal", "enemies": [ { "type": "ranged" } ], "powerups": [], "treasures": [] },
-    { "x": -1, "y": 1, "width": 1, "height": 1, "type": "normal", "enemies": [], "powerups": [ { "type": "speed", "x": 0, "y": 0 } ], "treasures": [] },
-    { "x": -1, "y": 2, "width": 1, "height": 1, "type": "normal", "enemies": [ { "type": "melee" } ], "powerups": [], "treasures": [] },
-    { "x": -2, "y": 2, "width": 1, "height": 1, "type": "normal", "enemies": [ { "type": "ranged" } ], "powerups": [], "treasures": [] },
-    { "x": -2, "y": 1, "width": 1, "height": 1, "type": "treasure", "enemies": [], "powerups": [], "treasures": [ { "type": "gold", "x": 0, "y": 0 } ] },
-    { "x": 0, "y": -1, "width": 1, "height": 1, "type": "normal", "enemies": [ { "type": "melee" } ], "powerups": [], "treasures": [] },
-    { "x": 1, "y": -1, "width": 1, "height": 1, "type": "normal", "enemies": [ { "type": "ranged" } ], "powerups": [], "treasures": [] }
+    { "x": 2, "y": 0, "width": 1, "height": 1, "type": "normal", "enemies": [ { "type": "ranged" }, { "type": "melee" }, { "type": "melee" } ], "powerups": [], "treasures": [] },
+    { "x": 0, "y": 1, "width": 1, "height": 1, "type": "normal", "enemies": [ { "type": "ranged" }, { "type": "melee" }, { "type": "melee" } ], "powerups": [], "treasures": [] },
+    { "x": -1, "y": 1, "width": 1, "height": 1, "type": "normal", "enemies": [ { "type": "melee" }, { "type": "ranged" }, { "type": "melee" }, { "type": "ranged" } ], "powerups": [ { "type": "damage", "x": 0, "y": 0 } ], "treasures": [] },
+    { "x": -1, "y": 2, "width": 1, "height": 1, "type": "normal", "enemies": [ { "type": "ranged" }, { "type": "melee" }, { "type": "melee" } ], "powerups": [], "treasures": [] },
+
+    { "x": 0, "y": 2, "width": 1, "height": 1, "type": "normal", "enemies": [ { "type": "melee" }, { "type": "ranged" }, { "type": "melee" }, { "type": "ranged" } ], "powerups": [ { "type": "shield", "x": 0, "y": 0 } ], "treasures": [] },
+    { "x": 0, "y": 3, "width": 1, "height": 1, "type": "normal", "enemies": [ { "type": "melee" }, { "type": "melee" }, { "type": "ranged" } ], "powerups": [], "treasures": [] },
+    { "x": 1, "y": 3, "width": 1, "height": 1, "type": "treasure", "enemies": [], "powerups": [], "treasures": [ { "type": "gem", "x": 0, "y": 0 } ] },
+    { "x": 2, "y": 3, "width": 1, "height": 1, "type": "normal", "enemies": [ { "type": "ranged" }, { "type": "melee" }, { "type": "ranged" }, { "type": "melee" } ], "powerups": [], "treasures": [] },
+    { "x": 3, "y": 3, "width": 1, "height": 1, "type": "normal", "enemies": [ { "type": "melee" }, { "type": "melee" }, { "type": "ranged" } ], "powerups": [ { "type": "speed", "x": 0, "y": 0 } ], "treasures": [] },
+
+    { "x": 4, "y": 2, "width": 1, "height": 1, "type": "normal", "enemies": [ { "type": "ranged" }, { "type": "melee" }, { "type": "ranged" } ], "powerups": [], "treasures": [ { "type": "gold", "x": 0, "y": 0 } ] },
+    { "x": 4, "y": 1, "width": 1, "height": 1, "type": "normal", "enemies": [ { "type": "melee" }, { "type": "melee" }, { "type": "ranged" }, { "type": "melee" } ], "powerups": [], "treasures": [] },
+    { "x": 4, "y": 0, "width": 1, "height": 1, "type": "treasure", "enemies": [], "powerups": [ { "type": "health", "x": 0, "y": 0 } ], "treasures": [ { "type": "gem", "x": 0, "y": 0 } ] },
+    { "x": 3, "y": 0, "width": 1, "height": 1, "type": "normal", "enemies": [ { "type": "melee" }, { "type": "ranged" }, { "type": "ranged" } ], "powerups": [], "treasures": [] },
+    { "x": 3, "y": -1, "width": 1, "height": 1, "type": "normal", "enemies": [ { "type": "melee" }, { "type": "melee" }, { "type": "ranged" }, { "type": "melee" } ], "powerups": [], "treasures": [] },
+
+    { "x": 2, "y": -1, "width": 1, "height": 1, "type": "normal", "enemies": [ { "type": "ranged" }, { "type": "melee" }, { "type": "ranged" } ], "powerups": [ { "type": "damage", "x": 0, "y": 0 } ], "treasures": [] },
+    { "x": 1, "y": -1, "width": 1, "height": 1, "type": "normal", "enemies": [ { "type": "melee" }, { "type": "melee" }, { "type": "ranged" } ], "powerups": [], "treasures": [] },
+    { "x": 0, "y": -1, "width": 1, "height": 1, "type": "normal", "enemies": [ { "type": "ranged" }, { "type": "melee" }, { "type": "melee" } ], "powerups": [], "treasures": [] },
+    { "x": -1, "y": 0, "width": 1, "height": 1, "type": "normal", "enemies": [ { "type": "melee" }, { "type": "ranged" }, { "type": "melee" }, { "type": "ranged" } ], "powerups": [ { "type": "shield", "x": 0, "y": 0 } ], "treasures": [] }
   ],
   "connections": [
     { "fromX": 0, "fromY": 0, "toX": 1, "toY": 0 },
@@ -25,14 +37,27 @@ Output valid JSON only. Do not explain. Do not use markdown or code blocks. Outp
     { "fromX": 1, "fromY": 1, "toX": 2, "toY": 1 },
     { "fromX": 2, "fromY": 1, "toX": 2, "toY": 2 },
     { "fromX": 2, "fromY": 2, "toX": 3, "toY": 2 },
-    { "fromX": 1, "fromY": 0, "toX": 2, "toY": 0 },
+
+    { "fromX": 3, "fromY": 2, "toX": 4, "toY": 2 },
+    { "fromX": 4, "fromY": 2, "toX": 4, "toY": 1 },
+    { "fromX": 4, "fromY": 1, "toX": 4, "toY": 0 },
+    { "fromX": 4, "fromY": 0, "toX": 3, "toY": 0 },
+    { "fromX": 3, "fromY": 0, "toX": 2, "toY": 0 },
+    { "fromX": 2, "fromY": 0, "toX": 1, "toY": 0 },
+
+    { "fromX": 0, "fromY": 0, "toX": 0, "toY": -1 },
+    { "fromX": 0, "fromY": -1, "toX": 1, "toY": -1 },
+    { "fromX": 1, "fromY": -1, "toX": 2, "toY": -1 },
+    { "fromX": 2, "fromY": -1, "toX": 3, "toY": -1 },
+
     { "fromX": 0, "fromY": 0, "toX": 0, "toY": 1 },
     { "fromX": 0, "fromY": 1, "toX": -1, "toY": 1 },
     { "fromX": -1, "fromY": 1, "toX": -1, "toY": 2 },
-    { "fromX": -1, "fromY": 2, "toX": -2, "toY": 2 },
-    { "fromX": -2, "fromY": 2, "toX": -2, "toY": 1 },
-    { "fromX": 0, "fromY": 0, "toX": 0, "toY": -1 },
-    { "fromX": 0, "fromY": -1, "toX": 1, "toY": -1 }
+    { "fromX": 0, "fromY": 1, "toX": 0, "toY": 2 },
+    { "fromX": 0, "fromY": 2, "toX": 0, "toY": 3 },
+    { "fromX": 0, "fromY": 3, "toX": 1, "toY": 3 },
+    { "fromX": 1, "fromY": 3, "toX": 2, "toY": 3 },
+    { "fromX": 2, "fromY": 3, "toX": 3, "toY": 3 }
   ],
   "objectives": [
     "Defeat all enemies",
