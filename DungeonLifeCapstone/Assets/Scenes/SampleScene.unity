@@ -1140,7 +1140,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   loader: {fileID: 1385207782}
-  apiKey: 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
+  apiKey: 
   model: gpt-3.5-turbo
   minRoom: 20
   maxRoom: 25
