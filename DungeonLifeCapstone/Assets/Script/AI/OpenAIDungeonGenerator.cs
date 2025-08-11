@@ -13,7 +13,7 @@ using UnityEditor;
 public class OpenAIDungeonGenerator : MonoBehaviour
 {
     public DungeonLoader loader;
-    public string apiKey = "";
+    public string apiKey;
     public string model = "gpt-3.5-turbo";
     public int minRoom;
     public int maxRoom;
@@ -43,6 +43,7 @@ public class OpenAIDungeonGenerator : MonoBehaviour
             Debug.LogError("Prompt file not found in Resources!");
             loadedPrompt = "";
         }
+        apiKey = ApiKeyLoader.LoadApiKey();
     }
 
     /// <summary>
