@@ -13,7 +13,8 @@ GameObject:
   - component: {fileID: 380903998043654057}
   - component: {fileID: -1994553015154803456}
   - component: {fileID: 8934413646848449684}
-  m_Layer: 0
+  - component: {fileID: 98530130484554800}
+  m_Layer: 9
   m_Name: BossEnemie
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -198,5 +199,24 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   OnAttackPerformed:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!114 &98530130484554800
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4034295282541716241}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fa903c0250c2f054499242ea4516abdb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  stats: {fileID: 11400000, guid: 17bf0ad605bf11d4aae028b4d1fccb06, type: 2}
+  onTakeDamage:
+    m_PersistentCalls:
+      m_Calls: []
+  onDeath:
     m_PersistentCalls:
       m_Calls: []

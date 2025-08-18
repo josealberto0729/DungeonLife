@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5171602445524848688}
   - component: {fileID: 3612246686242915950}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: DamagePowerUp
   m_TagString: Untagged
   m_Icon: {fileID: 0}

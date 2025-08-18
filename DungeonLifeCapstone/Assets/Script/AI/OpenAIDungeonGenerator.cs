@@ -88,17 +88,25 @@ public class OpenAIDungeonGenerator : MonoBehaviour
             model = model,
             messages = new[]
             {
-                new {
-                    role = "system",
-                    content =
-                    "You are an expert procedural generator. " +
-                    "When prompted, you must generate a random dungeon as valid JSON ONLY, with a compact grid, non-overlapping rooms, and each room's content, type, and position randomized every request. " +
-                    "NEVER repeat or copy previous examples. " +
-                    "ALWAYS make each generation unique and all values newly chosen."
+        new {
+            role = "system",
+            content =
+            "You are an expert procedural dungeon generator. " +
+            "RULES: " +
+            "- Always generate between 15 and 18 total rooms. " +
+            "- Exactly one room must be type 'spawn'. " +
+            "- At least one room must be type 'boss'. " +
+            "- At least one room must be type 'treasure'. " +
+            "- Every room must have between 8 and 10 enemies (except spawn, treasure, and boss rooms which may have special rules). " +
+            "- If the dungeon has fewer than 15 rooms or more than 18, the output is INVALID. " +
+            "- Ensure the grid is compact with no overlapping rooms. " +
+            "- Always connect rooms with valid adjacency so the dungeon is traversable. " +
+            "- Always output VALID JSON ONLY (no text, no explanations, no code blocks). " +
+            "- Each generation must be unique and must NOT copy previous examples."
                 },
                 new { role = "user", content = userPrompt }
             },
-            temperature = 1.0 // More random!
+            temperature = 1.0
         };
 
         string jsonBody = JsonConvert.SerializeObject(requestData);

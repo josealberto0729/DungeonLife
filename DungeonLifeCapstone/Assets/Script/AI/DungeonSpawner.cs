@@ -151,7 +151,11 @@ public class DungeonSpawner : MonoBehaviour
 
                 // Spawn Player
                 if (room.type == "spawn" && playerPrefab != null && player == null)
+                {
+                    Debug.Log("Spawning Player");
                     player = Instantiate(playerPrefab, roomPos, Quaternion.identity);
+                }
+                    
             }
         }
 
