@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemyID: 0
   type: Normal
-  level: 0
-  maxHealth: 0
+  level: 1
+  maxHealth: 100
   currentHealth: 0
-  attackDamage: 0
-  attackCooldown: 0
+  attackDamage: 10
+  attackCooldown: 1

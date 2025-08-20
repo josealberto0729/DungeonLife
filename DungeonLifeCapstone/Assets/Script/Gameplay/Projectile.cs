@@ -29,7 +29,7 @@ public class Projectile : MonoBehaviour
             EnemyStatsHandler enemyOwnerStats = owner.GetComponent<EnemyStatsHandler>();
             if (enemyOwnerStats != null)
             {
-                damageAmount = enemyOwnerStats.stats.attackDamage;
+                damageAmount = enemyOwnerStats.stats.rangeAttackDamage;
             }
         }
 

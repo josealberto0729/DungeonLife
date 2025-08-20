@@ -11,6 +11,7 @@ public class EnemyStatsSO : ScriptableObject
     public float maxHealth;
     public float currentHealth;
     [Header("Combat")]
-    public float attackDamage;
+    public float rangeAttackDamage;
+    public float meleeDamage;  
     public float attackCooldown;
 }
