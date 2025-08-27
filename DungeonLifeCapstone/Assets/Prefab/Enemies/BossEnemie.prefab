@@ -220,3 +220,4 @@ MonoBehaviour:
   onDeath:
     m_PersistentCalls:
       m_Calls: []
+  roomManager: {fileID: 0}

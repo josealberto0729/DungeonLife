@@ -3,12 +3,12 @@ using UnityEngine;
 public class PlayerCombat : MonoBehaviour
 {
     public GameObject projectilePrefab;
-    public Transform firePoint; // position where projectile spawns
+    public Transform firePoint; 
     public float projectileSpeed = 10f;
 
     void Update()
     {
-        if (Input.GetMouseButtonDown(0)) // Left click
+        if (Input.GetMouseButtonDown(0)) 
         {
             Shoot();
         }
@@ -36,7 +36,7 @@ public class PlayerCombat : MonoBehaviour
         Projectile projectile = projectileObj.GetComponent<Projectile>();
         if (projectile != null)
         {
-            projectile.owner = gameObject; // this player is the owner
+            projectile.owner = gameObject; 
         }
     }
 }

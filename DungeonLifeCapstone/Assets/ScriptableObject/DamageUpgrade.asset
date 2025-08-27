@@ -9,15 +9,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 1c247483dcfbeea49b6b235a7ed1ac28, type: 3}
-  m_Name: PlayerStat
+  m_Script: {fileID: 11500000, guid: 24c6009ae6c16e5498e8d449d104cf43, type: 3}
+  m_Name: DamageUpgrade
   m_EditorClassIdentifier: 
-  playerID: 1
-  curExp: 0
-  level: 1
-  maxHealth: 100
-  currentHealth: 100
-  moveSpeed: 5
-  meleeDamage: 100
-  rangedDamage: 50
-  attackCooldown: 1
+  upgradeName: Damage
+  icon: {fileID: -615291544, guid: ece435def67a07f4385dec9afdd9d086, type: 3}
+  description: 
+  type: 1
+  value: 5

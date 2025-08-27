@@ -4,8 +4,9 @@ public class DoorPortal : MonoBehaviour
 {
     public Vector2Int roomGridPosition;
     public string direction;
+    public Vector2Int targetRoomGridPosition;
     private Transform player;
-    private float minDistance = 0.5f;
+    private float minDistance = 1f;
 
     private void Start()
     {
@@ -18,9 +19,10 @@ public class DoorPortal : MonoBehaviour
         {
             Debug.Log("Player collided to the door");
             var teleportFlag = other.GetComponent<PlayerTeleportDistanceFlag>();
+            Debug.Log("player can teleport "+teleportFlag.CanTeleport());
             if (teleportFlag != null && teleportFlag.CanTeleport())
             {
-                Vector2Int targetRoomGridPos = GetConnectedRoomPosition();
+                Vector2Int targetRoomGridPos = targetRoomGridPosition;
                 if (DungeonSpawner.Instance.roomGameObjects.TryGetValue(targetRoomGridPos, out GameObject targetRoom))
                 {
                     string targetDoorName = GetOppositeDoorName(direction);

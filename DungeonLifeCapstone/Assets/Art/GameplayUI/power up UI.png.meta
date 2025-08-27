@@ -1,0 +1,359 @@
+fileFormatVersion: 2
+guid: ece435def67a07f4385dec9afdd9d086
+TextureImporter:
+  internalIDToNameTable: []
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 0
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: iOS
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: power up UI_90
+      rect:
+        serializedVersion: 2
+        x: 235
+        y: 528
+        width: 456
+        height: 384
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 241997e923c88574a8abfd8255c9baeb
+      internalID: 738995855
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: power up UI_91
+      rect:
+        serializedVersion: 2
+        x: 235
+        y: 113
+        width: 457
+        height: 383
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 4994dda02f298544cb01f82774d89f9d
+      internalID: 524554525
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: power up UI_94
+      rect:
+        serializedVersion: 2
+        x: 811
+        y: 529
+        width: 455
+        height: 384
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: de9fc8cd9e2988049827d75edb797c7a
+      internalID: -615291544
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: power up UI_95
+      rect:
+        serializedVersion: 2
+        x: 811
+        y: 112
+        width: 456
+        height: 384
+      alignment: 0
+      pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: d13175ffbfc076748b6d6f7e5ec70bbc
+      internalID: -1783261217
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: fb864e4444af9cd4aae8638ad5253d76
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    nameFileIdTable:
+      power up UI_0: 90387972
+      power up UI_1: -1001565544
+      power up UI_10: 2045472856
+      power up UI_100: 744756217
+      power up UI_101: 770648308
+      power up UI_102: -2123865838
+      power up UI_103: -83769413
+      power up UI_104: 1120925295
+      power up UI_105: -407429510
+      power up UI_106: -1087951808
+      power up UI_107: -972283677
+      power up UI_108: -1627171411
+      power up UI_109: -151284181
+      power up UI_11: 551200872
+      power up UI_110: 806425298
+      power up UI_111: -1258189658
+      power up UI_112: 325333929
+      power up UI_113: 1840701186
+      power up UI_114: 30639996
+      power up UI_115: 486298237
+      power up UI_116: 711435278
+      power up UI_117: 2133458983
+      power up UI_118: -1075419041
+      power up UI_119: 1498176444
+      power up UI_12: -2072213659
+      power up UI_120: -140689849
+      power up UI_121: 592561157
+      power up UI_122: 1648663581
+      power up UI_123: 324082194
+      power up UI_124: -1914409455
+      power up UI_125: 1700641154
+      power up UI_126: 255253490
+      power up UI_127: -2079572851
+      power up UI_128: -1173129036
+      power up UI_129: 2007455030
+      power up UI_13: 1140124488
+      power up UI_14: -762713063
+      power up UI_15: 2121416402
+      power up UI_16: 1764636276
+      power up UI_17: 480875871
+      power up UI_18: -510720379
+      power up UI_19: -1903696828
+      power up UI_2: 729495554
+      power up UI_20: 1661141821
+      power up UI_21: 60915136
+      power up UI_22: 1228492946
+      power up UI_23: 718121613
+      power up UI_24: 1773069201
+      power up UI_25: -129705265
+      power up UI_26: 1475909801
+      power up UI_27: -1025449046
+      power up UI_28: -1532398263
+      power up UI_29: -1062657764
+      power up UI_3: 2054719158
+      power up UI_30: 1265634095
+      power up UI_31: -395974131
+      power up UI_32: -1364175115
+      power up UI_33: 1168696033
+      power up UI_34: -99460487
+      power up UI_35: 1058199138
+      power up UI_36: -1774883618
+      power up UI_37: -555951089
+      power up UI_38: -379189734
+      power up UI_39: 1172061897
+      power up UI_4: 84112803
+      power up UI_40: -326222905
+      power up UI_41: 1483874791
+      power up UI_42: 1116792260
+      power up UI_43: 734808839
+      power up UI_44: -1404797365
+      power up UI_45: 1209297351
+      power up UI_46: -436862030
+      power up UI_47: 1291581172
+      power up UI_48: 1058117619
+      power up UI_49: 2139491787
+      power up UI_5: -559029691
+      power up UI_50: -1579832754
+      power up UI_51: -41066615
+      power up UI_52: -1539622561
+      power up UI_53: -29758346
+      power up UI_54: -2003564029
+      power up UI_55: -750038131
+      power up UI_56: -1152959848
+      power up UI_57: -1242753302
+      power up UI_58: 1043435547
+      power up UI_59: -1633830289
+      power up UI_6: 1401671156
+      power up UI_60: 1524282107
+      power up UI_61: 1276459233
+      power up UI_62: 363891800
+      power up UI_63: -256024087
+      power up UI_64: -1003913910
+      power up UI_65: -2009726915
+      power up UI_66: 250611253
+      power up UI_67: 1500990470
+      power up UI_68: 1594017214
+      power up UI_69: 1053040536
+      power up UI_7: -1328804418
+      power up UI_70: -865734055
+      power up UI_71: 2076110361
+      power up UI_72: -1319841337
+      power up UI_73: -679339292
+      power up UI_74: -32839456
+      power up UI_75: 571571967
+      power up UI_76: 49981501
+      power up UI_77: -924404577
+      power up UI_78: -826760557
+      power up UI_79: -867476747
+      power up UI_8: -336033658
+      power up UI_80: 396382661
+      power up UI_81: 171928731
+      power up UI_82: -1278722430
+      power up UI_83: 1402135528
+      power up UI_84: -2058760504
+      power up UI_85: 573343031
+      power up UI_86: -709581459
+      power up UI_87: 149721919
+      power up UI_88: 1486223402
+      power up UI_89: -1247830439
+      power up UI_9: -960987476
+      power up UI_90: 738995855
+      power up UI_91: 524554525
+      power up UI_92: 1573733269
+      power up UI_93: -1430428964
+      power up UI_94: -615291544
+      power up UI_95: -1783261217
+      power up UI_96: 2023706002
+      power up UI_97: 1998545524
+      power up UI_98: -395963094
+      power up UI_99: 1945977395
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

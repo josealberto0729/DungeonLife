@@ -3,11 +3,16 @@ using UnityEngine;
 public class PlayerStatsHandler : MonoBehaviour
 {
     public PlayerStatsSO stats;
+    public static PlayerStatsHandler Instance { get; private set; }
+
 
     private void Awake()
     {
+        if (Instance != null && Instance != this) Destroy(gameObject);
+        else Instance = this;
         // Ensure current health starts full
         stats.currentHealth = stats.maxHealth;
+        
     }
 
     public void TakeDamage(float amount)
