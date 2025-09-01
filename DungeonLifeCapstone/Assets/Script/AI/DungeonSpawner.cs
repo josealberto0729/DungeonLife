@@ -52,9 +52,42 @@ public class DungeonSpawner : MonoBehaviour
     }
     public void SpawnVictoryPortal()
     {
-        Vector3 spawnPos = playerPrefab.transform.position + Vector3.up * 2f;
-        Instantiate(victoryPortalPrefab, spawnPos, Quaternion.identity);
+        if (loader == null)
+        {
+            Debug.LogWarning("DungeonLoader is missing!");
+            return;
+        }
+
+        DungeonData data = loader.GetDungeonData();
+        if (data == null)
+        {
+            Debug.LogWarning("DungeonData is null!");
+            return;
+        }
+
+        // Find the boss room in the data
+        Room bossRoomData = data.rooms.Find(r => r.type.ToLower() == "boss");
+        if (bossRoomData == null)
+        {
+            Debug.LogWarning("No boss room found in dungeon data!");
+            return;
+        }
+
+        Vector2Int bossRoomPos = new Vector2Int(bossRoomData.x, bossRoomData.y);
+
+        if (roomGameObjects.TryGetValue(bossRoomPos, out GameObject bossRoomGO))
+        {
+            Vector3 spawnPos = bossRoomGO.transform.position + Vector3.up * 1f; // slightly above the center
+            Instantiate(victoryPortalPrefab, spawnPos, Quaternion.identity);
+            Debug.Log("Victory portal spawned in boss room!");
+        }
+        else
+        {
+            Debug.LogWarning("Boss room GameObject not found! Spawning portal at origin.");
+            Instantiate(victoryPortalPrefab, Vector3.zero, Quaternion.identity);
+        }
     }
+
 
     public void CreateDungeon()
     {
