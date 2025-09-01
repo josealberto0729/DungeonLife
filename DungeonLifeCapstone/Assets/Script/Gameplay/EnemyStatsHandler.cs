@@ -9,6 +9,11 @@ public class EnemyStatsHandler : MonoBehaviour
     public UnityEvent onDeath;
     public RoomManager roomManager;
 
+    [Header("Boss Settings")]
+    public bool isBoss = false;
+    public UnityEvent onBossDeath;
+
+    private bool isDead = false;
     private float lastAttackTime;
     private void Awake()
     {
@@ -18,6 +23,7 @@ public class EnemyStatsHandler : MonoBehaviour
     }
     public void TakeDamage(float amount)
     {
+        if (isDead) return;
         onTakeDamage.Invoke();
         stats.currentHealth -= amount;
         Debug.Log($"{gameObject.name} took {amount} damage. HP left: {stats.currentHealth}");
@@ -35,6 +41,8 @@ public class EnemyStatsHandler : MonoBehaviour
         //Debug.Log($"{gameObject.name} has died!");
         //onDeath.Invoke();
         //Destroy(gameObject); // or trigger loot drop, respawn, etc.
+        if (isDead) return;
+        isDead = true;
         if (roomManager == null)
             roomManager = GetComponentInParent<RoomManager>();
         if (roomManager != null)
@@ -42,12 +50,24 @@ public class EnemyStatsHandler : MonoBehaviour
             Debug.Log("cleaning list");
             roomManager.OnEnemyDied(this); 
         }
+        if (isBoss)
+        {
+            Debug.Log("Boss defeated! Triggering boss mechanics.");
+            onBossDeath.Invoke();
+            OpenAIDungeonGenerator.Instance.onJsonGenerated.RemoveAllListeners();
+            OpenAIDungeonGenerator.Instance.onJsonGenerated.AddListener(() =>
+            {
+                Debug.Log("Spawning portal since JSON is ready!");
+                DungeonSpawner.Instance.SpawnVictoryPortal();
+            });
+            OpenAIDungeonGenerator.Instance.CallGenerateNewJson();
             
+        }
 
         Debug.Log($"{gameObject.name} has died!");
         onDeath.Invoke();
 
-        Destroy(gameObject);
+        Destroy(gameObject,0.5f);
     }
 
     public void DealMeleeDamage(GameObject target)

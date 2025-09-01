@@ -5,6 +5,8 @@ using UnityEngine.Networking;
 using Newtonsoft.Json;
 using System.Text.RegularExpressions;
 using System.IO;
+using UnityEngine.Events;
+
 
 #if UNITY_EDITOR
 using UnityEditor;
@@ -14,7 +16,7 @@ public class OpenAIDungeonGenerator : MonoBehaviour
 {
     public DungeonLoader loader;
     public string apiKey;
-    public string model = "gpt-3.5-turbo";
+    public string model = "gpt-4o";
     public int minRoom;
     public int maxRoom;
 
@@ -27,8 +29,16 @@ public class OpenAIDungeonGenerator : MonoBehaviour
     public bool useBaseJsonAsExample = false;
     public DungeonData generatedDungeon;
 
+    public static OpenAIDungeonGenerator Instance { get; private set; }
+
+
+    public UnityEvent onJsonGenerated;
+
     void Awake()
     {
+        if (Instance != null && Instance != this) Destroy(gameObject);
+        else Instance = this;
+
         if (loader == null)
             loader = FindFirstObjectByType<DungeonLoader>();
 
@@ -94,9 +104,10 @@ public class OpenAIDungeonGenerator : MonoBehaviour
             "You are an expert procedural dungeon generator. " +
             "RULES: " +
             "- Always generate between 15 and 18 total rooms. " +
+            "- Each room must have a unique (x, y) coordinate pair. No two rooms may share the same (x, y)." +
             "- Exactly one room must be type 'spawn'. " +
-            "- At least one room must be type 'boss'. " +
-            "- At least one room must be type 'treasure'. " +
+            "- one room must be type 'boss'. " +
+            "- one room must be type 'treasure'. " +
             "- Every room must have between 8 and 10 enemies (except spawn, treasure, and boss rooms which may have special rules). " +
             "- If the dungeon has fewer than 15 rooms or more than 18, the output is INVALID. " +
             "- Ensure the grid is compact with no overlapping rooms. " +
@@ -149,6 +160,7 @@ public class OpenAIDungeonGenerator : MonoBehaviour
 #if UNITY_EDITOR
                     AssetDatabase.Refresh();
 #endif
+                    onJsonGenerated?.Invoke();
                 }
                 catch (System.Exception e)
                 {

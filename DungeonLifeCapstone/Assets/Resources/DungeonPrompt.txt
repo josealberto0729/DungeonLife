@@ -1,6 +1,10 @@
 Creating a game in unity, you will always create a new json file that randomize the rooms location and pattern every time base on the JSON file below
 Always make sure there is a room type spawn
+Always make sure there is a room type Boss
+Always make sure no rooms are overlapping
 Output valid JSON only. Do not explain. Do not use markdown or code blocks. Output JSON with the exact structure and field names as described.
+
+
 
 {
 "rooms": [

@@ -30,6 +30,8 @@ public class DungeonSpawner : MonoBehaviour
     public GameObject treasurePrefab;
     public GameObject playerPrefab;
 
+    public GameObject victoryPortalPrefab;
+
     public GameObject player;
     public bool useRandomGeneration = false;
 
@@ -47,6 +49,11 @@ public class DungeonSpawner : MonoBehaviour
         }
         Instance = this;
         DontDestroyOnLoad(gameObject);
+    }
+    public void SpawnVictoryPortal()
+    {
+        Vector3 spawnPos = playerPrefab.transform.position + Vector3.up * 2f;
+        Instantiate(victoryPortalPrefab, spawnPos, Quaternion.identity);
     }
 
     public void CreateDungeon()
@@ -175,26 +182,29 @@ public class DungeonSpawner : MonoBehaviour
 
     void SpawnCorridor(int fromX, int fromY, int toX, int toY)
     {
-        Vector2Int current = new Vector2Int(fromX, fromY);
-        Vector2Int target = new Vector2Int(toX, toY);
+        Vector2Int from = new Vector2Int(fromX, fromY);
+        Vector2Int to = new Vector2Int(toX, toY);
+        Vector2Int current = from;
 
-        // Horizontal first
-        while (current.x != target.x)
+        // Horizontal path first
+        while (current.x != to.x)
         {
-            Vector2Int next = new Vector2Int(current.x + (target.x > current.x ? 1 : -1), current.y);
+            Vector2Int next = new Vector2Int(current.x + (to.x > current.x ? 1 : -1), current.y);
             SpawnCorridorTile(next);
-            TrySpawnDoorBetweenRooms(current, next);
             current = next;
         }
 
-        // Vertical next
-        while (current.y != target.y)
+        // Vertical path second
+        while (current.y != to.y)
         {
-            Vector2Int next = new Vector2Int(current.x, current.y + (target.y > current.y ? 1 : -1));
+            Vector2Int next = new Vector2Int(current.x, current.y + (to.y > current.y ? 1 : -1));
             SpawnCorridorTile(next);
-            TrySpawnDoorBetweenRooms(current, next);
             current = next;
         }
+
+        // ✅ Always try to spawn doors between the two rooms at endpoints
+        TrySpawnDoorBetweenRooms(from, to);
+        TrySpawnDoorBetweenRooms(to, from);
     }
 
     void SpawnCorridorTile(Vector2Int pos)
@@ -310,4 +320,27 @@ public class DungeonSpawner : MonoBehaviour
         "health" => healthPowerupPrefab,
         _ => null
     };
+
+    //public void LoadNewDungeonFromJson(DungeonData newData)
+    //{
+    //    foreach (Transform child in transform) Destroy(child.gameObject); occupiedPositions.Clear(); roomGameObjects.Clear(); Random.InitState(System.DateTime.Now.Millisecond); int nextRoomCount = Random.Range(8, 12);
+    //}
+    public void GenerateNextLevel()
+    {
+
+        foreach (Transform child in transform) Destroy(child.gameObject);
+        occupiedPositions.Clear(); 
+        roomGameObjects.Clear(); 
+        Random.InitState(System.DateTime.Now.Millisecond); 
+        int nextRoomCount = Random.Range(8, 12);
+        CreateDungeon();
+        if (player != null) 
+        { 
+            Room spawnRoom = loader.GetDungeonData().rooms.Find(r => r.type == "spawn"); 
+            if (spawnRoom != null) 
+            { Vector3 newPosition = new Vector3(spawnRoom.x * tileSize.x, spawnRoom.y * tileSize.y, 0); 
+                player.transform.position = newPosition; 
+            } 
+        }
+    }
 }
