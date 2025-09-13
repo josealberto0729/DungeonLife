@@ -88,6 +88,11 @@ public class DungeonSpawner : MonoBehaviour
         }
     }
 
+    public void Start()
+    {
+        CreateDungeon();
+    }
+
 
     public void CreateDungeon()
     {

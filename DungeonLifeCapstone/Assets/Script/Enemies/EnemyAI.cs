@@ -1,4 +1,3 @@
-using UnityEditor.EditorTools;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -14,6 +13,15 @@ public class EnemyAI : MonoBehaviour
     public Vector2[] patrolPoints;
     public int currentPatrolIndex = 0;
 
+    [Header("Enemy Type")]
+    public bool isRanged = false;             
+    public EnemyStatsSO stats;            
+    [Header("Ranged Settings")]
+    public GameObject projectilePrefab;       
+    public Transform firePoint;               
+    public float projectileSpeed = 8f;
+    public float firingRange = 6f;
+
     [Header("Unity Events")]
     public UnityEvent OnIdleEnter;
     public UnityEvent OnPatrolEnter;
@@ -27,7 +35,14 @@ public class EnemyAI : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         TransitionToState(new IdleState());
+
         player = DungeonSpawner.Instance.player.transform;
+
+        if (stats != null)
+        {
+            stats = Instantiate(stats);
+            stats.currentHealth = stats.maxHealth;
+        }
     }
 
     // Update is called once per frame

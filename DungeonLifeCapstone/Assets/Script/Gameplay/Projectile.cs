@@ -4,6 +4,7 @@ public class Projectile : MonoBehaviour
 {
     public float lifetime = 3f;
     public GameObject owner; // who shot this projectile
+    public float baseDamage = 10f;
 
     void Start()
     {

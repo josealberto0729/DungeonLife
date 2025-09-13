@@ -33,7 +33,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 5541653516709419304}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!212 &5407894578480507348
@@ -178,11 +179,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   player: {fileID: 3843161169673783915, guid: 2c9205eeebc750c40956f03cd3a36cf9, type: 3}
   detectionRange: 5
-  attackRange: 1.2
+  attackRange: 10
   moveSpeed: 2
   rb: {fileID: 0}
   patrolPoints: []
   currentPatrolIndex: 0
+  isRanged: 1
+  stats: {fileID: 11400000, guid: 17bf0ad605bf11d4aae028b4d1fccb06, type: 2}
+  projectilePrefab: {fileID: 841310981078663949, guid: 3ea0315959feb024abb7849f2286f24e, type: 3}
+  firePoint: {fileID: 5541653516709419304}
+  projectileSpeed: 8
+  firingRange: 6
   OnIdleEnter:
     m_PersistentCalls:
       m_Calls: []
@@ -221,3 +228,38 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   roomManager: {fileID: 0}
+  isBoss: 0
+  onBossDeath:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!1 &5262889283986193469
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5541653516709419304}
+  m_Layer: 9
+  m_Name: Firepoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5541653516709419304
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5262889283986193469}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.02, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2668608183560261290}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}

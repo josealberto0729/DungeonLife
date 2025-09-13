@@ -183,6 +183,11 @@ MonoBehaviour:
   rb: {fileID: 0}
   patrolPoints: []
   currentPatrolIndex: 0
+  isRanged: 0
+  stats: {fileID: 11400000, guid: 17bf0ad605bf11d4aae028b4d1fccb06, type: 2}
+  projectilePrefab: {fileID: 0}
+  firePoint: {fileID: 0}
+  projectileSpeed: 8
   OnIdleEnter:
     m_PersistentCalls:
       m_Calls: []
@@ -221,3 +226,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   roomManager: {fileID: 0}
+  isBoss: 0
+  onBossDeath:
+    m_PersistentCalls:
+      m_Calls: []

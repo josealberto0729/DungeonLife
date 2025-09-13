@@ -17,5 +17,6 @@ MonoBehaviour:
   level: 1
   maxHealth: 100
   currentHealth: 0
-  attackDamage: 10
+  rangeAttackDamage: 10
+  meleeDamage: 10
   attackCooldown: 1
