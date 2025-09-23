@@ -40,6 +40,8 @@ public class DungeonSpawner : MonoBehaviour
 
     public UnityEvent allEnemySpawned;
 
+    public GameObject retryPanel;
+
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -91,6 +93,7 @@ public class DungeonSpawner : MonoBehaviour
     public void Start()
     {
         CreateDungeon();
+        //player.GetComponent<PlayerStatsHandler>().retryPanel = retryPanel;
     }
 
 
@@ -128,6 +131,7 @@ public class DungeonSpawner : MonoBehaviour
         roomGameObjects.Clear();
 
         // Spawn rooms
+        Debug.Log("rooms are : " + data.rooms +" : " + data.rooms.Count);
         foreach (Room room in data.rooms)
         {
             Vector2Int roomGridPos = new Vector2Int(room.x, room.y);

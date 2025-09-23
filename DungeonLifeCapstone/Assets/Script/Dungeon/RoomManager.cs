@@ -9,7 +9,7 @@ public class RoomManager : MonoBehaviour
     void Awake()
     {
         if (upgradeUI == null)
-            upgradeUI = UpgradeUI.Instance;
+            upgradeUI = GameManager.Instance.upgrade;
     }
 
     public void FillEnemyList()
@@ -29,8 +29,11 @@ public class RoomManager : MonoBehaviour
 
     public void OnEnemyDied(EnemyStatsHandler enemy)
     {
-        enemies.Remove(enemy.GetComponent<EnemyAI>()); 
+        enemies.Remove(enemy.GetComponent<EnemyAI>());
         if (enemies.Count == 0)
+        {
+            MenuController.Instance.ShowRoomReward();
             upgradeUI.Show();
+        }
     }
 }

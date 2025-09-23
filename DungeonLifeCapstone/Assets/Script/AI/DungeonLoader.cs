@@ -26,11 +26,11 @@ public class DungeonLoader : MonoBehaviour
 
     public DungeonData GetDungeonData()
     {
-        // Use runtime-generated dungeon if available
-        if (runtimeData != null)
-            return runtimeData;
+        //// Use runtime-generated dungeon if available
+        //if (runtimeData != null)
+        //    return runtimeData;
 
-        // Fallback to static JSON
+        //// Fallback to static JSON
         return LoadFromJSON();
     }
 }

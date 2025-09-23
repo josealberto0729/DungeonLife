@@ -16,7 +16,7 @@ MonoBehaviour:
   curExp: 0
   level: 1
   maxHealth: 100
-  currentHealth: 100
+  currentHealth: 83.7
   moveSpeed: 5
   meleeDamage: 100
   rangedDamage: 50

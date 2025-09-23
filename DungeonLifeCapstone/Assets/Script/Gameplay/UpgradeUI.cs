@@ -9,17 +9,9 @@ public class UpgradeUI : MonoBehaviour
     public Transform buttonParent;
     public List<UpgradeSO> allUpgrades;
     private PlayerStatsHandler player;
-
-    public static UpgradeUI Instance { get; private set; }
-
-    private void Awake()
-    {
-        if (Instance != null && Instance != this) Destroy(gameObject);
-        else Instance = this;
-    }
     void Start()
     {
-        player = PlayerStatsHandler.Instance;
+        player = GameManager.Instance.player;
         gameObject.SetActive(false); // hidden by default
     }
 
@@ -60,23 +52,29 @@ public class UpgradeUI : MonoBehaviour
     }
     private void ApplyUpgrade(UpgradeSO upgrade)
     {
-        player = PlayerStatsHandler.Instance;
+        player = GameManager.Instance.player;
         switch (upgrade.type)
         {
             case UpgradeSO.UpgradeType.MaxHealth:
                 player.stats.maxHealth *= (1f + upgrade.value / 100f);
-                player.stats.currentHealth = player.stats.maxHealth; // heal to full
+                //player.stats.currentHealth = player.stats.maxHealth;
+                MenuController.Instance.ShowIngameView();
+                MenuController.Instance.UpdateUI(player.stats.currentHealth);
                 break;
             case UpgradeSO.UpgradeType.Damage:
                 player.stats.meleeDamage *= (1f + upgrade.value / 100f);
                 player.stats.rangedDamage *= (1f + upgrade.value / 100f);
+                MenuController.Instance.ShowIngameView();
                 break;
             case UpgradeSO.UpgradeType.AttackSpeed:
                 player.stats.attackCooldown *= (1f - upgrade.value / 100f);
                 player.stats.attackCooldown = Mathf.Max(0.1f, player.stats.attackCooldown);
+                MenuController.Instance.ShowIngameView();
                 break;
             case UpgradeSO.UpgradeType.Heal:
                 player.stats.currentHealth = player.stats.maxHealth;
+                MenuController.Instance.ShowIngameView();
+                MenuController.Instance.UpdateUI(player.stats.currentHealth);
                 break;
         }
 
