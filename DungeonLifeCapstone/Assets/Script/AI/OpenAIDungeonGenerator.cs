@@ -6,17 +6,46 @@ using Newtonsoft.Json;
 using System.Text.RegularExpressions;
 using System.IO;
 using UnityEngine.Events;
+using System.Collections.Generic;
+
 
 
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
 
+[System.Serializable]
+public class ChatRequest
+{
+    public string model;
+    public List<ChatMessage> messages;
+    public float temperature;
+}
+
+[System.Serializable]
+public class ChatMessage
+{
+    public string role;
+    public string content;
+}
+
+[System.Serializable]
+public class OpenAIChatResponse
+{
+    public Choice[] choices;
+}
+
+[System.Serializable]
+public class Choice
+{
+    public ChatMessage message;
+}
+
 public class OpenAIDungeonGenerator : MonoBehaviour
 {
     public DungeonLoader loader;
     public string apiKey;
-    public string model = "gpt-4o";
+    public string model = "gpt-4o-mini";
     public int minRoom;
     public int maxRoom;
 
@@ -93,32 +122,37 @@ public class OpenAIDungeonGenerator : MonoBehaviour
             //userPrompt = openAiPrompt + "\nGenerate a new, unique, random dungeon layout as valid JSON, following the last rules (and format, if shown above).";
         }
 
-        var requestData = new
+        var requestData = new ChatRequest
         {
-            model = model,
-            messages = new[]
-            {
-        new {
+            model = model, // your public string model = "gpt-4o-mini";
+            messages = new List<ChatMessage>
+    {
+        new ChatMessage
+        {
             role = "system",
             content =
-            "You are an expert procedural dungeon generator. " +
-            "RULES: " +
-            "- Always generate between 15 and 18 total rooms. " +
-            "- Each room must have a unique (x, y) coordinate pair. No two rooms may share the same (x, y)." +
-            "- Exactly one room must be type 'spawn'. " +
-            "- one room must be type 'boss'. " +
-            "- one room must be type 'treasure'. " +
-            "- Every room must have between 8 and 10 enemies (except spawn, treasure, and boss rooms which may have special rules). " +
-            "- If the dungeon has fewer than 15 rooms or more than 18, the output is INVALID. " +
-            "- Ensure the grid is compact with no overlapping rooms. " +
-            "- Always connect rooms with valid adjacency so the dungeon is traversable. " +
-            "- Always output VALID JSON ONLY (no text, no explanations, no code blocks). " +
-            "- Each generation must be unique and must NOT copy previous examples."
-                },
-                new { role = "user", content = userPrompt }
-            },
-            temperature = 1.0
+                "You are an expert procedural dungeon generator. " +
+                "RULES: " +
+                "- Always generate between 15 and 18 total rooms. " +
+                "- Each room must have a unique (x, y) coordinate pair. " +
+                "- Exactly one room must be type 'spawn'. " +
+                "- One room must be type 'boss'. " +
+                "- One room must be type 'treasure'. " +
+                "- Every room must have between 8 and 10 enemies (except spawn, treasure, and boss rooms). " +
+                "- Ensure the grid is compact with no overlapping rooms. " +
+                "- Always connect rooms with valid adjacency so the dungeon is traversable. " +
+                "- Always output VALID JSON ONLY (no text, no explanations, no code blocks). " +
+                "- Each generation must be unique and must NOT copy previous examples."
+        },
+        new ChatMessage
+        {
+            role = "user",
+            content = userPrompt
+        }
+    },
+            temperature = 1.0f
         };
+
 
         string jsonBody = JsonConvert.SerializeObject(requestData);
 
@@ -135,6 +169,8 @@ public class OpenAIDungeonGenerator : MonoBehaviour
             if (request.result != UnityWebRequest.Result.Success)
             {
                 Debug.LogError("OpenAI request failed: " + request.error);
+                Debug.LogError("Response body: " + request.downloadHandler.text);
+                yield break;
             }
             else
             {
@@ -186,17 +222,17 @@ public class OpenAIDungeonGenerator : MonoBehaviour
     }
 }
 
-[System.Serializable]
-public class OpenAIChatResponse
-{
-    public Choice[] choices;
-}
+//[System.Serializable]
+//public class OpenAIChatResponse
+//{
+//    public Choice[] choices;
+//}
 
-[System.Serializable]
-public class Choice
-{
-    public Message message;
-}
+//[System.Serializable]
+//public class Choice
+//{
+//    public Message message;
+//}
 
 [System.Serializable]
 public class Message
