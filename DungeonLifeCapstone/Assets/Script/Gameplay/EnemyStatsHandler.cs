@@ -35,11 +35,6 @@ public class EnemyStatsHandler : MonoBehaviour
     }
     private void Die()
     {
-        //roomManager = gameObject.GetComponentInParent<RoomManager>();
-        //roomManager.CheckEnemies();
-        //Debug.Log($"{gameObject.name} has died!");
-        //onDeath.Invoke();
-        //Destroy(gameObject); // or trigger loot drop, respawn, etc.
         if (isDead) return;
         isDead = true;
         if (roomManager == null)

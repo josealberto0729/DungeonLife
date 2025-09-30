@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 public class DungeonLoader : MonoBehaviour
 {
     public TextAsset dungeonJson; 
-    private DungeonData runtimeData; 
+    private DungeonData runtimeData;
 
     public void SetDungeonData(DungeonData data)
     {
@@ -18,19 +18,14 @@ public class DungeonLoader : MonoBehaviour
             Debug.LogError("Dungeon JSON not assigned!");
             return null;
         }
-
         string jsonData = dungeonJson.text;
+        Debug.Log("Cur JSON = " + jsonData);
         DungeonData data = JsonConvert.DeserializeObject<DungeonData>(jsonData);
         return data;
     }
 
     public DungeonData GetDungeonData()
     {
-        //// Use runtime-generated dungeon if available
-        //if (runtimeData != null)
-        //    return runtimeData;
-
-        //// Fallback to static JSON
         return LoadFromJSON();
     }
 }

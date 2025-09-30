@@ -41,6 +41,7 @@ public class DungeonSpawner : MonoBehaviour
     public UnityEvent allEnemySpawned;
 
     public GameObject retryPanel;
+    public GameObject playerSpawnPoint;
 
     private void Awake()
     {
@@ -92,7 +93,7 @@ public class DungeonSpawner : MonoBehaviour
 
     public void Start()
     {
-        CreateDungeon();
+        //CreateDungeon();
         //player.GetComponent<PlayerStatsHandler>().retryPanel = retryPanel;
     }
 
@@ -118,7 +119,11 @@ public class DungeonSpawner : MonoBehaviour
         loader.GetDungeonData();
         GenerateDungeon();
     }
-
+    public void RespawnPlayer()
+    {
+        player = Instantiate(playerPrefab, playerSpawnPoint.transform.position, Quaternion.identity);
+    }
+    
     void GenerateDungeon()
     {
         DungeonData data = loader.GetDungeonData();
@@ -198,6 +203,7 @@ public class DungeonSpawner : MonoBehaviour
                 {
                     Debug.Log("Spawning Player");
                     player = Instantiate(playerPrefab, roomPos, Quaternion.identity);
+                    playerSpawnPoint.transform.position = player.transform.position;
                 }
             }
         }
