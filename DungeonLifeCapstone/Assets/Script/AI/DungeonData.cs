@@ -28,6 +28,14 @@ public class Room
     public List<Enemy> enemies;
     public List<Powerup> powerups;
     public List<Treasure> treasures;
+    public int originalX; // new
+    public int originalY; // new
+
+    public Room()
+    {
+        originalX = x;
+        originalY = y;
+    }
 }
 
 [System.Serializable]

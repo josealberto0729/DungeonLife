@@ -1,48 +1,32 @@
 using UnityEngine;
-using System;
-using System.Text;
-using System.Security.Cryptography;
-using System.IO;
+using Newtonsoft.Json;
+
+[System.Serializable]
+public class ApiKeyData
+{
+    public string apiKey;
+}
 
 public static class ApiKeyLoader
 {
-    private const string passphrase = "MyStrongPassphrase123!"; // same as in editor
-
-    public static string LoadApiKey()
+    public static string LoadApiKey(string fileName = "openai_key")
     {
-        string filePath = Path.Combine(Application.streamingAssetsPath, "api_key.txt");
-
-        if (!File.Exists(filePath))
+        TextAsset jsonFile = Resources.Load<TextAsset>(fileName);
+        if (jsonFile == null)
         {
-            Debug.LogError("API key file not found!");
-            return null;
+            Debug.LogError($"API key file '{fileName}.json' not found in Resources!");
+            return "";
         }
 
-        string encryptedData = File.ReadAllText(filePath);
-        return Decrypt(encryptedData, passphrase);
-    }
-
-    private static string Decrypt(string encryptedText, string passphrase)
-    {
-        byte[] combinedBytes = Convert.FromBase64String(encryptedText);
-
-        using (Aes aes = Aes.Create())
+        try
         {
-            aes.Key = SHA256.Create().ComputeHash(Encoding.UTF8.GetBytes(passphrase));
-
-            byte[] iv = new byte[16];
-            Array.Copy(combinedBytes, 0, iv, 0, iv.Length);
-            aes.IV = iv;
-
-            int cipherTextLength = combinedBytes.Length - iv.Length;
-            byte[] cipherText = new byte[cipherTextLength];
-            Array.Copy(combinedBytes, iv.Length, cipherText, 0, cipherTextLength);
-
-            using (var decryptor = aes.CreateDecryptor(aes.Key, aes.IV))
-            {
-                byte[] plainBytes = decryptor.TransformFinalBlock(cipherText, 0, cipherText.Length);
-                return Encoding.UTF8.GetString(plainBytes);
-            }
+            ApiKeyData data = JsonConvert.DeserializeObject<ApiKeyData>(jsonFile.text);
+            return data.apiKey;
+        }
+        catch (System.Exception e)
+        {
+            Debug.LogError($"Failed to parse API key JSON: {e.Message}");
+            return "";
         }
     }
 }

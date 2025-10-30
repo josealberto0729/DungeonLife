@@ -6,7 +6,7 @@ public class DungeonSpawner : MonoBehaviour
 {
     public static DungeonSpawner Instance { get; private set; }
     public DungeonLoader loader;
-    public Vector2 tileSize = new Vector2(5f, 5f);
+    public Vector2 tileSize = new Vector2(5f,5f);
     public int? customSeed = null;
 
     // Prefabs
@@ -37,6 +37,11 @@ public class DungeonSpawner : MonoBehaviour
 
     private HashSet<Vector2Int> occupiedPositions = new HashSet<Vector2Int>();
     public Dictionary<Vector2Int, GameObject> roomGameObjects = new Dictionary<Vector2Int, GameObject>();
+    // map final grid anchor -> Room data so SpawnDoor can compute fallback positions
+    private Dictionary<Vector2Int, Room> roomDataByGrid = new Dictionary<Vector2Int, Room>();
+
+    // dedicated parent for all generated dungeon objects
+    private Transform roomsParent;
 
     public UnityEvent allEnemySpawned;
 
@@ -80,7 +85,7 @@ public class DungeonSpawner : MonoBehaviour
 
         if (roomGameObjects.TryGetValue(bossRoomPos, out GameObject bossRoomGO))
         {
-            Vector3 spawnPos = bossRoomGO.transform.position + Vector3.up * 1f; // slightly above the center
+            Vector3 spawnPos = bossRoomGO.transform.position + Vector3.up *1f; // slightly above the center
             Instantiate(victoryPortalPrefab, spawnPos, Quaternion.identity);
             Debug.Log("Victory portal spawned in boss room!");
         }
@@ -106,6 +111,21 @@ public class DungeonSpawner : MonoBehaviour
             return;
         }
 
+        // Destroy previously created rooms container only to avoid interfering with other generators
+        if (roomsParent != null)
+        {
+            Destroy(roomsParent.gameObject);
+            roomsParent = null;
+        }
+
+        occupiedPositions.Clear();
+        roomGameObjects.Clear();
+        roomDataByGrid.Clear();
+
+        // create new parent for this generation
+        roomsParent = new GameObject("DungeonRooms").transform;
+        roomsParent.parent = transform;
+
         if (corridorTilePrefab != null)
         {
             tileSize = GetFullPrefabSize(corridorTilePrefab);
@@ -116,14 +136,48 @@ public class DungeonSpawner : MonoBehaviour
         Random.InitState(seed);
         Debug.Log("Seed used: " + seed);
 
+        // Force the loader to reload data from JSON so we start from original coordinates
+        // each time CreateDungeon is called (prevents mutated coordinates from previous runs)
+        try
+        {
+            loader.SetDungeonData(null);
+        }
+        catch { }
+
         loader.GetDungeonData();
+        var disabledGenerators = new List<MonoBehaviour>();
+        // Temporarily disable other generator components in the scene to avoid them spawning rooms
+        var roots = UnityEngine.SceneManagement.SceneManager.GetActiveScene().GetRootGameObjects();
+        foreach (var root in roots)
+        {
+            // include inactive to match behavior of FindObjectsOfType
+            var components = root.GetComponentsInChildren<MonoBehaviour>(true);
+            foreach (var mb in components)
+            {
+                if (mb == null || mb == this) continue;
+                var tname = mb.GetType().Name;
+                if (tname.Contains("Generator") || tname.Contains("BSP") || tname.Contains("Procedural") || tname.Contains("OpenAI"))
+                {
+                    if (mb.enabled)
+                    {
+                        mb.enabled = false;
+                        disabledGenerators.Add(mb);
+                    }
+                }
+            }
+        }
+
         GenerateDungeon();
+
+        // Re-enable previously disabled generator components
+        foreach (var mb in disabledGenerators)
+            mb.enabled = true;
     }
     public void RespawnPlayer()
     {
         player = Instantiate(playerPrefab, playerSpawnPoint.transform.position, Quaternion.identity);
     }
-    
+
     void GenerateDungeon()
     {
         DungeonData data = loader.GetDungeonData();
@@ -133,23 +187,50 @@ public class DungeonSpawner : MonoBehaviour
             return;
         }
 
-        roomGameObjects.Clear();
+        // Debug: how many rooms present in the JSON
+        int jsonRoomCount = data.rooms != null ? data.rooms.Count :0;
+        Debug.Log($"Rooms in JSON: {jsonRoomCount}");
 
-        // Spawn rooms
-        Debug.Log("rooms are : " + data.rooms +" : " + data.rooms.Count);
+        //1) Fix overlaps and get mapping original -> final anchor
+        Dictionary<Vector2Int, Vector2Int> originalToFinal = FixOverlappingRooms(data);
+
+        // Clear state
+        occupiedPositions.Clear();
+        roomGameObjects.Clear();
+        roomDataByGrid.Clear();
+
+        //2) Spawn rooms at final positions (anchor = top-left or anchor definition you use)
+        Debug.Log("rooms are : " + data.rooms + " : " + data.rooms.Count);
         foreach (Room room in data.rooms)
         {
+            // final anchor already stored in room.x / room.y by FixOverlappingRooms
             Vector2Int roomGridPos = new Vector2Int(room.x, room.y);
-            if (occupiedPositions.Contains(roomGridPos)) continue;
 
+            // avoid duplicated instantiation if multiple tiles covered the same anchor
+            if (occupiedPositions.Contains(roomGridPos))
+            {
+                Debug.Log($"Skipping instantiation for grid {roomGridPos} because occupied.");
+                continue;
+            }
+
+            // mark occupied by anchor (we also mark footprint below)
             occupiedPositions.Add(roomGridPos);
-            Vector3 roomPos = new Vector3(room.x * tileSize.x, room.y * tileSize.y, 0);
+
+            Vector3 roomPos = new Vector3(room.x * tileSize.x, room.y * tileSize.y,0);
             GameObject roomPrefab = GetRoomPrefab(room.type);
 
             if (roomPrefab != null)
             {
-                GameObject roomObj = Instantiate(roomPrefab, roomPos, Quaternion.identity, transform);
+                GameObject roomObj = Instantiate(roomPrefab, roomPos, Quaternion.identity, roomsParent);
+                Debug.Log($"Instantiated room prefab '{roomPrefab.name}' type='{room.type}' at grid={roomGridPos} world={roomPos}");
                 roomGameObjects.Add(roomGridPos, roomObj);
+                // store room data for door fallback calculations
+                roomDataByGrid[roomGridPos] = room;
+
+                // mark the full footprint as occupied for other placement logic (optional)
+                for (int x = room.x; x < room.x + room.width; x++)
+                for (int y = room.y; y < room.y + room.height; y++)
+                occupiedPositions.Add(new Vector2Int(x, y));
 
                 // Spawn enemies
                 foreach (Enemy enemy in room.enemies ?? new List<Enemy>())
@@ -157,15 +238,15 @@ public class DungeonSpawner : MonoBehaviour
                     GameObject enemyPrefab = GetEnemyPrefab(enemy.type);
                     if (enemyPrefab != null)
                     {
-                        Vector3 offset = new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f), 0);
+                        Vector3 offset = new Vector3(Random.Range(-1f,1f), Random.Range(-1f,1f),0);
                         GameObject enemyObj = Instantiate(enemyPrefab, roomPos + offset, Quaternion.identity, roomObj.transform);
                         EnemyAI enemyAI = enemyObj.GetComponent<EnemyAI>();
                         if (enemyAI != null)
                         {
                             Vector2[] patrolPoints = new Vector2[3];
-                            float patrolRangeX = tileSize.x * room.width / 2f;
-                            float patrolRangeY = tileSize.y * room.height / 2f;
-                            for (int i = 0; i < patrolPoints.Length; i++)
+                            float patrolRangeX = tileSize.x * room.width /2f;
+                            float patrolRangeY = tileSize.y * room.height /2f;
+                            for (int i =0; i < patrolPoints.Length; i++)
                             {
                                 float x = roomPos.x + Random.Range(-patrolRangeX, patrolRangeX);
                                 float y = roomPos.y + Random.Range(-patrolRangeY, patrolRangeY);
@@ -175,7 +256,8 @@ public class DungeonSpawner : MonoBehaviour
                         }
                     }
                 }
-                roomObj.GetComponent<RoomManager>().FillEnemyList();
+                RoomManager rm = roomObj.GetComponent<RoomManager>();
+                if (rm != null) rm.FillEnemyList();
 
                 // Spawn powerups
                 foreach (Powerup powerup in room.powerups ?? new List<Powerup>())
@@ -183,7 +265,7 @@ public class DungeonSpawner : MonoBehaviour
                     GameObject powerupPrefab = GetPowerupPrefab(powerup.type);
                     if (powerupPrefab != null)
                     {
-                        Vector3 offset = new Vector3(powerup.x, powerup.y, 0);
+                        Vector3 offset = new Vector3(powerup.x, powerup.y,0);
                         Instantiate(powerupPrefab, roomPos + offset, Quaternion.identity, roomObj.transform);
                     }
                 }
@@ -193,7 +275,7 @@ public class DungeonSpawner : MonoBehaviour
                 {
                     if (treasurePrefab != null)
                     {
-                        Vector3 offset = new Vector3(treasure.x, treasure.y, 0);
+                        Vector3 offset = new Vector3(treasure.x, treasure.y,0);
                         Instantiate(treasurePrefab, roomPos + offset, Quaternion.identity, roomObj.transform);
                     }
                 }
@@ -203,32 +285,63 @@ public class DungeonSpawner : MonoBehaviour
                 {
                     Debug.Log("Spawning Player");
                     player = Instantiate(playerPrefab, roomPos, Quaternion.identity);
-                    playerSpawnPoint.transform.position = player.transform.position;
+                    if (playerSpawnPoint != null) playerSpawnPoint.transform.position = player.transform.position;
                 }
             }
         }
 
-        // Spawn corridors & doors
-        foreach (Connection connection in data.connections)
+        // Debug: how many rooms were actually spawned in the scene
+        Debug.Log($"Rooms spawned in scene: {roomGameObjects.Count} (JSON: {jsonRoomCount})");
+
+        // Additional debug: total children under spawner and list them (helps identify unexpected objects)
+        int totalChildren = roomsParent != null ? roomsParent.childCount :0;
+        Debug.Log($"Total children under DungeonRooms: {totalChildren}");
+        if (roomsParent != null)
         {
-            SpawnCorridor(connection.fromX, connection.fromY, connection.toX, connection.toY);
+            for (int i =0; i < roomsParent.childCount; i++)
+            {
+                Debug.Log($"Child[{i}] = {roomsParent.GetChild(i).name}");
+            }
         }
 
-        // Spawn global powerups
+        //3) Spawn corridors & doors using original -> final mapping
+        foreach (Connection connection in data.connections ?? new List<Connection>())
+        {
+            Vector2Int fromOriginal = new Vector2Int(connection.fromX, connection.fromY);
+            Vector2Int toOriginal = new Vector2Int(connection.toX, connection.toY);
+
+            if (!originalToFinal.ContainsKey(fromOriginal) || !originalToFinal.ContainsKey(toOriginal))
+            {
+                Debug.LogWarning($"Skipping connection from {fromOriginal} to {toOriginal} - mapping missing.");
+                continue;
+            }
+
+            Vector2Int fromFinal = originalToFinal[fromOriginal];
+            Vector2Int toFinal = originalToFinal[toOriginal];
+
+            // Spawn corridor between final anchors (this will place corridor tiles along the grid)
+            ArrangeRooms(fromFinal.x, fromFinal.y, toFinal.x, toFinal.y);
+
+            // Spawn doors on appropriate room sides using the dominant direction between anchors
+            TrySpawnDoorBetweenRooms(fromFinal, toFinal);
+            TrySpawnDoorBetweenRooms(toFinal, fromFinal);
+        }
+
+        //4) Spawn global powerups
         foreach (Powerup powerup in data.powerups ?? new List<Powerup>())
         {
-            Vector3 powerupPos = new Vector3(powerup.x * tileSize.x, 0, powerup.y * tileSize.y);
+            Vector3 powerupPos = new Vector3(powerup.x * tileSize.x,0, powerup.y * tileSize.y);
             GameObject powerupPrefab = GetPowerupPrefab(powerup.type);
             if (powerupPrefab != null)
                 Instantiate(powerupPrefab, powerupPos, Quaternion.identity);
         }
 
-        // Log objectives
+        //5) Log objectives
         foreach (string obj in data.objectives ?? new List<string>())
             Debug.Log("Objective: " + obj);
     }
 
-    void SpawnCorridor(int fromX, int fromY, int toX, int toY)
+    void ArrangeRooms(int fromX, int fromY, int toX, int toY)
     {
         Vector2Int from = new Vector2Int(fromX, fromY);
         Vector2Int to = new Vector2Int(toX, toY);
@@ -237,59 +350,61 @@ public class DungeonSpawner : MonoBehaviour
         // Horizontal path first
         while (current.x != to.x)
         {
-            Vector2Int next = new Vector2Int(current.x + (to.x > current.x ? 1 : -1), current.y);
-            SpawnCorridorTile(next);
+            Vector2Int next = new Vector2Int(current.x + (to.x > current.x ?1 : -1), current.y);
+
             current = next;
         }
 
         // Vertical path second
         while (current.y != to.y)
         {
-            Vector2Int next = new Vector2Int(current.x, current.y + (to.y > current.y ? 1 : -1));
-            SpawnCorridorTile(next);
+            Vector2Int next = new Vector2Int(current.x, current.y + (to.y > current.y ?1 : -1));
+
             current = next;
         }
 
-        // ✅ Always try to spawn doors between the two rooms at endpoints
+
         TrySpawnDoorBetweenRooms(from, to);
         TrySpawnDoorBetweenRooms(to, from);
     }
 
-    void SpawnCorridorTile(Vector2Int pos)
+
+
+    void TrySpawnDoorBetweenRooms(Vector2Int fromAnchor, Vector2Int toAnchor)
     {
-        if (corridorTilePrefab != null)
+        // If either room doesn't exist as a spawned GameObject, bail out
+        if (!roomGameObjects.TryGetValue(fromAnchor, out GameObject fromRoom) ||
+            !roomGameObjects.TryGetValue(toAnchor, out GameObject toRoom))
+            return;
+
+        Vector2Int delta = toAnchor - fromAnchor;
+        // decide axis: use the axis with the larger absolute distance
+        if (Mathf.Abs(delta.x) >= Mathf.Abs(delta.y))
         {
-            Vector3 worldPos = new Vector3(pos.x * tileSize.x, pos.y * tileSize.y, 0);
-            Instantiate(corridorTilePrefab, worldPos, Quaternion.identity, transform);
+            // horizontal dominant
+            if (delta.x >0)
+            {
+                SpawnDoor(fromRoom, "DoorRight", toAnchor);
+                SpawnDoor(toRoom, "DoorLeft", fromAnchor);
+            }
+            else if (delta.x <0)
+            {
+                SpawnDoor(fromRoom, "DoorLeft", toAnchor);
+                SpawnDoor(toRoom, "DoorRight", fromAnchor);
+            }
         }
-    }
-
-    void TrySpawnDoorBetweenRooms(Vector2Int from, Vector2Int to)
-    {
-        if (roomGameObjects.TryGetValue(from, out GameObject fromRoom) &&
-            roomGameObjects.TryGetValue(to, out GameObject toRoom))
+        else
         {
-            Vector2Int dir = to - from;
-
-            if (dir == Vector2Int.right)
+            // vertical dominant
+            if (delta.y >0)
             {
-                SpawnDoor(fromRoom, "DoorRight", to);
-                SpawnDoor(toRoom, "DoorLeft", from);
+                SpawnDoor(fromRoom, "DoorTop", toAnchor);
+                SpawnDoor(toRoom, "DoorBottom", fromAnchor);
             }
-            else if (dir == Vector2Int.left)
+            else if (delta.y <0)
             {
-                SpawnDoor(fromRoom, "DoorLeft", to);
-                SpawnDoor(toRoom, "DoorRight", from);
-            }
-            else if (dir == Vector2Int.up)
-            {
-                SpawnDoor(fromRoom, "DoorTop", to);
-                SpawnDoor(toRoom, "DoorBottom", from);
-            }
-            else if (dir == Vector2Int.down)
-            {
-                SpawnDoor(fromRoom, "DoorBottom", to);
-                SpawnDoor(toRoom, "DoorTop", from);
+                SpawnDoor(fromRoom, "DoorBottom", toAnchor);
+                SpawnDoor(toRoom, "DoorTop", fromAnchor);
             }
         }
     }
@@ -311,7 +426,53 @@ public class DungeonSpawner : MonoBehaviour
         }
         else
         {
-            Debug.LogWarning($"Missing door point {doorPointName} or doorPrefab not assigned.");
+            // Fallback: compute door position at room edge if prefab doesn't include named hook
+            if (doorPrefab == null)
+            {
+                Debug.LogWarning($"Door prefab not assigned; cannot spawn door for {roomObj.name}.");
+                return;
+            }
+
+            Vector2Int gridPos = GetRoomGridPosition(roomObj);
+            Room roomData = null;
+            roomDataByGrid.TryGetValue(gridPos, out roomData);
+
+            Vector3 roomCenter = roomObj.transform.position;
+            Vector3 offset = Vector3.zero;
+
+            if (doorPointName.Contains("Right"))
+            {
+                float halfWidth = (roomData != null) ? (roomData.width * tileSize.x) /2f : tileSize.x /2f;
+                offset = new Vector3(halfWidth,0,0);
+            }
+            else if (doorPointName.Contains("Left"))
+            {
+                float halfWidth = (roomData != null) ? (roomData.width * tileSize.x) /2f : tileSize.x /2f;
+                offset = new Vector3(-halfWidth,0,0);
+            }
+            else if (doorPointName.Contains("Top"))
+            {
+                float halfHeight = (roomData != null) ? (roomData.height * tileSize.y) /2f : tileSize.y /2f;
+                offset = new Vector3(0, halfHeight,0);
+            }
+            else if (doorPointName.Contains("Bottom"))
+            {
+                float halfHeight = (roomData != null) ? (roomData.height * tileSize.y) /2f : tileSize.y /2f;
+                offset = new Vector3(0, -halfHeight,0);
+            }
+
+            Vector3 spawnPos = roomCenter + offset;
+            GameObject door = Instantiate(doorPrefab, spawnPos, Quaternion.identity, roomObj.transform);
+            DoorPortal portal = door.AddComponent<DoorPortal>();
+            portal.roomGridPosition = gridPos;
+            portal.targetRoomGridPosition = targetRoomGridPos;
+
+            if (doorPointName.Contains("Right")) portal.direction = "Right";
+            else if (doorPointName.Contains("Left")) portal.direction = "Left";
+            else if (doorPointName.Contains("Top")) portal.direction = "Top";
+            else if (doorPointName.Contains("Bottom")) portal.direction = "Bottom";
+
+            Debug.LogWarning($"Spawned fallback door for {roomObj.name} at {spawnPos} (no named hook '{doorPointName}' found).");
         }
     }
 
@@ -329,14 +490,14 @@ public class DungeonSpawner : MonoBehaviour
     {
         GameObject temp = Instantiate(prefab);
         Renderer[] renderers = temp.GetComponentsInChildren<Renderer>();
-        if (renderers.Length == 0)
+        if (renderers.Length ==0)
         {
             Destroy(temp);
             return Vector2.one;
         }
 
         Bounds bounds = renderers[0].bounds;
-        for (int i = 1; i < renderers.Length; i++)
+        for (int i =1; i < renderers.Length; i++)
             bounds.Encapsulate(renderers[i].bounds);
 
         Destroy(temp);
@@ -369,26 +530,127 @@ public class DungeonSpawner : MonoBehaviour
         _ => null
     };
 
-    //public void LoadNewDungeonFromJson(DungeonData newData)
-    //{
-    //    foreach (Transform child in transform) Destroy(child.gameObject); occupiedPositions.Clear(); roomGameObjects.Clear(); Random.InitState(System.DateTime.Now.Millisecond); int nextRoomCount = Random.Range(8, 12);
-    //}
     public void GenerateNextLevel()
     {
 
-        foreach (Transform child in transform) Destroy(child.gameObject);
-        occupiedPositions.Clear(); 
-        roomGameObjects.Clear(); 
-        Random.InitState(System.DateTime.Now.Millisecond); 
-        int nextRoomCount = Random.Range(8, 12);
+        if (roomsParent != null) Destroy(roomsParent.gameObject);
+        occupiedPositions.Clear();
+        roomGameObjects.Clear();
+        Random.InitState(System.DateTime.Now.Millisecond);
+        int nextRoomCount = Random.Range(8,12);
         CreateDungeon();
-        if (player != null) 
-        { 
-            Room spawnRoom = loader.GetDungeonData().rooms.Find(r => r.type == "spawn"); 
-            if (spawnRoom != null) 
-            { Vector3 newPosition = new Vector3(spawnRoom.x * tileSize.x, spawnRoom.y * tileSize.y, 0); 
-                player.transform.position = newPosition; 
-            } 
+        if (player != null)
+        {
+            Room spawnRoom = loader.GetDungeonData().rooms.Find(r => r.type == "spawn");
+            if (spawnRoom != null)
+            {
+                Vector3 newPosition = new Vector3(spawnRoom.x * tileSize.x, spawnRoom.y * tileSize.y,0);
+                player.transform.position = newPosition;
+            }
         }
     }
+
+    // Returns a mapping from original positions to final positions after resolving overlaps
+    Dictionary<Vector2Int, Vector2Int> FixOverlappingRooms(DungeonData data)
+    {
+        // Work on a copy sorted by area (largest first) so big rooms get placed first.
+        List<Room> roomsBySize = new List<Room>(data.rooms);
+        roomsBySize.Sort((a, b) => (b.width * b.height).CompareTo(a.width * a.height));
+
+        // capture original positions (from the freshly-loaded data) for mapping
+        Dictionary<Room, Vector2Int> roomOriginal = new Dictionary<Room, Vector2Int>();
+        foreach (var r in data.rooms)
+            roomOriginal[r] = new Vector2Int(r.x, r.y);
+
+        HashSet<Vector2Int> usedTiles = new HashSet<Vector2Int>();
+        Dictionary<Vector2Int, Vector2Int> originalToFinal = new Dictionary<Vector2Int, Vector2Int>();
+        Dictionary<Room, Vector2Int> roomFinal = new Dictionary<Room, Vector2Int>();
+
+        bool FootprintOverlaps(int anchorX, int anchorY, Room r)
+        {
+            for (int x = anchorX; x < anchorX + r.width; x++)
+            for (int y = anchorY; y < anchorY + r.height; y++)
+            if (usedTiles.Contains(new Vector2Int(x, y)))
+                return true;
+            return false;
+        }
+
+        foreach (Room room in roomsBySize)
+        {
+            Vector2Int original = roomOriginal[room];
+            Vector2Int final = original;
+
+            if (FootprintOverlaps(final.x, final.y, room))
+            {
+                int step =1;
+                bool found = false;
+                while (!found)
+                {
+                    // ring search: top/bottom rows then left/right columns
+                    for (int dx = -step; dx <= step; dx++)
+                    {
+                        var candTop = new Vector2Int(original.x + dx, original.y - step);
+                        if (!FootprintOverlaps(candTop.x, candTop.y, room)) { final = candTop; found = true; break; }
+
+                        var candBottom = new Vector2Int(original.x + dx, original.y + step);
+                        if (!FootprintOverlaps(candBottom.x, candBottom.y, room)) { final = candBottom; found = true; break; }
+                    }
+                    if (found) break;
+
+                    for (int dy = -step +1; dy <= step -1; dy++)
+                    {
+                        var candLeft = new Vector2Int(original.x - step, original.y + dy);
+                        if (!FootprintOverlaps(candLeft.x, candLeft.y, room)) { final = candLeft; found = true; break; }
+
+                        var candRight = new Vector2Int(original.x + step, original.y + dy);
+                        if (!FootprintOverlaps(candRight.x, candRight.y, room)) { final = candRight; found = true; break; }
+                    }
+                    step++;
+                    if (step >500)
+                    {
+                        Debug.LogError("FixOverlappingRooms: couldn't find free spot for a room after500 steps. Forcing placement at original.");
+                        final = original;
+                        break;
+                    }
+                }
+            }
+
+            // record chosen final for this room (don't mutate data.rooms yet)
+            roomFinal[room] = final;
+
+            // mark tiles used by this room footprint (so subsequent rooms consider it)
+            for (int x = final.x; x < final.x + room.width; x++)
+            for (int y = final.y; y < final.y + room.height; y++)
+                usedTiles.Add(new Vector2Int(x, y));
+
+            // record mapping from original coords to final coords if not already present
+            if (!originalToFinal.ContainsKey(original))
+                originalToFinal[original] = final;
+            else if (originalToFinal[original] != final)
+                Debug.LogWarning($"Multiple rooms share original position {original}. First mapped to {originalToFinal[original]}, another mapped to {final}.");
+        }
+
+        // Apply final anchors to the actual data.rooms now that all finals are decided
+        for (int i =0; i < data.rooms.Count; i++)
+        {
+            var r = data.rooms[i];
+            if (roomFinal.ContainsKey(r))
+            {
+                var f = roomFinal[r];
+                r.x = f.x;
+                r.y = f.y;
+            }
+        }
+
+        // debug log (optional)
+        foreach (var kvp in originalToFinal)
+        {
+            Debug.Log($"Room original {kvp.Key} -> final {kvp.Value}");
+        }
+
+        return originalToFinal;
+
+
+    }
 }
+

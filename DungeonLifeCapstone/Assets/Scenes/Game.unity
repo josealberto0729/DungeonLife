@@ -118,56 +118,6 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!1 &173908187
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 173908189}
-  - component: {fileID: 173908188}
-  m_Layer: 0
-  m_Name: Test
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
---- !u!114 &173908188
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 173908187}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e04e573087a6523488434bfbc88ac8d9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  roomCount: 10
-  roomSizeMin: {x: 2, y: 2}
-  roomSizeMax: {x: 4, y: 4}
-  dungeonWidth: 20
-  dungeonHeight: 20
-  loader: {fileID: 1385207782}
---- !u!4 &173908189
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 173908187}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 88.55157, y: 155.73888, z: -15.160197}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &185953442
 GameObject:
   m_ObjectHideFlags: 0
@@ -1582,9 +1532,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   loader: {fileID: 1385207782}
   apiKey: 
-  model: gpt-4o
-  minRoom: 20
-  maxRoom: 25
+  model: gpt-4o-mini
   promptFileName: DungeonPrompt
   useBaseJsonAsExample: 0
   generatedDungeon:
@@ -2264,7 +2212,7 @@ MonoBehaviour:
   normalRoomPrefab: {fileID: 1645482502123220, guid: 987e020c70b9f50449b1733365d1e65f, type: 3}
   treasureRoomPrefab: {fileID: 1645482502123220, guid: 987e020c70b9f50449b1733365d1e65f, type: 3}
   bossRoomPrefab: {fileID: 1645482502123220, guid: 987e020c70b9f50449b1733365d1e65f, type: 3}
-  corridorTilePrefab: {fileID: 1645482502123220, guid: 987e020c70b9f50449b1733365d1e65f, type: 3}
+  corridorTilePrefab: {fileID: 1645482502123220, guid: 5eda0a43203185049b637fdadd59311e, type: 3}
   shopRoomPrefab: {fileID: 1645482502123220, guid: 987e020c70b9f50449b1733365d1e65f, type: 3}
   doorPrefab: {fileID: 903076981341627035, guid: 1d6ff5ec92bab744da738c8fa75fd082, type: 3}
   meleeEnemyPrefab: {fileID: 4279802846746209650, guid: 06410c5b26b87b441940d7ef2703111a, type: 3}
@@ -3020,7 +2968,6 @@ SceneRoots:
   - {fileID: 410087041}
   - {fileID: 832575519}
   - {fileID: 1385207784}
-  - {fileID: 173908189}
   - {fileID: 844399049}
   - {fileID: 262792199}
   - {fileID: 1587322680}
