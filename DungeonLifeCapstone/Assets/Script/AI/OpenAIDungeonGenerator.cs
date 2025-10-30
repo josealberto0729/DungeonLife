@@ -63,10 +63,26 @@ public class OpenAIDungeonGenerator : MonoBehaviour
 
     void Awake()
     {
-        var config = OpenAIConfig.LoadConfig();
-        if (Instance != null && Instance != this) Destroy(gameObject);
-        else Instance = this;
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        Instance = this;
 
+        // Load the OpenAI config (only once)
+        if (!OpenAIConfig.LoadConfig())
+        {
+            Debug.LogError("Failed to load OpenAI config. Check your JSON file in StreamingAssets.");
+            return;
+        }
+
+        // Cache API and model
+        apiKey = OpenAIConfig.ApiKey;
+        model = OpenAIConfig.Model;
+        Debug.Log($"Loaded model: {model}, API key length: {apiKey.Length}");
+
+        // Find DungeonLoader if not assigned
         if (loader == null)
             loader = FindFirstObjectByType<DungeonLoader>();
 
@@ -81,7 +97,6 @@ public class OpenAIDungeonGenerator : MonoBehaviour
             Debug.LogError("Prompt file not found in Resources!");
             loadedPrompt = "";
         }
-        apiKey = config.apiKey;
     }
 
     /// <summary>
