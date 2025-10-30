@@ -63,6 +63,7 @@ public class OpenAIDungeonGenerator : MonoBehaviour
 
     void Awake()
     {
+        var config = OpenAIConfig.LoadConfig();
         if (Instance != null && Instance != this) Destroy(gameObject);
         else Instance = this;
 
@@ -80,7 +81,7 @@ public class OpenAIDungeonGenerator : MonoBehaviour
             Debug.LogError("Prompt file not found in Resources!");
             loadedPrompt = "";
         }
-        apiKey = ApiKeyLoader.LoadApiKey();
+        apiKey = config.apiKey;
     }
 
     /// <summary>
