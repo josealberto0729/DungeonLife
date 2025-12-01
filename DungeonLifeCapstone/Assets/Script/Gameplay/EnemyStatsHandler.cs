@@ -48,13 +48,13 @@ public class EnemyStatsHandler : MonoBehaviour
         {
             Debug.Log("Boss defeated! Triggering boss mechanics.");
             onBossDeath.Invoke();
-            OpenAIDungeonGenerator.Instance.onJsonGenerated.RemoveAllListeners();
-            OpenAIDungeonGenerator.Instance.onJsonGenerated.AddListener(() =>
-            {
-                Debug.Log("Spawning portal since JSON is ready!");
-                DungeonSpawner.Instance.SpawnVictoryPortal();
-            });
-            OpenAIDungeonGenerator.Instance.CallGenerateNewJson();
+            //OpenAIDungeonGenerator.Instance.onJsonGenerated.RemoveAllListeners();
+            //OpenAIDungeonGenerator.Instance.onJsonGenerated.AddListener(() =>
+            //{
+            //    Debug.Log("Spawning portal since JSON is ready!");
+            //    DungeonSpawner.Instance.SpawnVictoryPortal();
+            //});
+            //OpenAIDungeonGenerator.Instance.CallGenerateNewJson();
             
         }
 

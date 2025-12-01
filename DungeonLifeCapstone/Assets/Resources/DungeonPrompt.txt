@@ -5,9 +5,12 @@ Step 4: Generate connections for adjacent rooms only.
 Output only valid JSON at the end.
 "Creating a game in unity, you will always create a new json file that randomize the rooms location and pattern every time base on the JSON file below"
 "Output valid JSON only. Do not explain. Do not use markdown or code blocks. Output JSON with the exact structure and field names as described."
+Every room must have connections connecting to all adjacent rooms.
+Doors must be mutual (if room A connects to B, B connects back to A).
+Rooms cannot float disconnected from the main path unless it’s intended.
 
 
-
+Example format:
 {
 "rooms": [
 { "x": 0, "y": 0, "width": 1, "height": 1, "type": "spawn", "enemies": [], "powerups": [], "treasures": [] },

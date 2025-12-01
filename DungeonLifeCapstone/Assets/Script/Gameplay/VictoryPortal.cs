@@ -18,7 +18,7 @@ public class VictoryPortal : MonoBehaviour
         {
             hasActivated = true; // prevent multiple triggers
             Debug.Log("Player entered Victory Portal → Loading new dungeon");
-            DungeonData newDungeon = OpenAIDungeonGenerator.Instance.generatedDungeon;
+            //DungeonData newDungeon = OpenAIDungeonGenerator.Instance.generatedDungeon;
 
             if (DungeonSpawner.Instance != null)
             {

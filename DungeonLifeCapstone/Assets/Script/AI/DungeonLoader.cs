@@ -1,47 +1,75 @@
 using UnityEngine;
 using Newtonsoft.Json;
+using System.Collections.Generic;
+using System.IO;
 
 public class DungeonLoader : MonoBehaviour
 {
-    public TextAsset dungeonJson; 
-    private DungeonData runtimeData;
+    public string levelFolderName = "Level"; // folder inside persistentDataPath
+    private List<DungeonData> allDungeons = new List<DungeonData>();
+    private int currentDungeonIndex = 0;
 
-    public void SetDungeonData(DungeonData data)
+    private DungeonData runtimeData;
+    public static DungeonLoader Instance { get; private set; }
+    private void Awake()
     {
-        runtimeData = data;
+        if (Instance == null)
+        {
+            Instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+            return;
+        }
+        LoadAllDungeons();
     }
 
-    private DungeonData LoadFromJSON()
+    private void LoadAllDungeons()
     {
-        if (dungeonJson == null)
+        allDungeons.Clear();
+
+        string folderPath = Path.Combine(Application.persistentDataPath, levelFolderName);
+        if (!Directory.Exists(folderPath))
         {
-            Debug.LogError("Dungeon JSON not assigned!");
-            return null;
+            Debug.LogError($"Dungeon folder not found at: {folderPath}");
+            return;
         }
 
-        string jsonData = dungeonJson.text;
-        Debug.Log("Cur JSON = " + jsonData);
-
-        DungeonData data = null;
-        try
+        string[] jsonFiles = Directory.GetFiles(folderPath, "*.json");
+        if (jsonFiles.Length == 0)
         {
-            data = JsonConvert.DeserializeObject<DungeonData>(jsonData);
-        }
-        catch (System.Exception ex)
-        {
-            Debug.LogError($"Failed to deserialize dungeon JSON: {ex.Message}");
-            return null;
+            Debug.LogError($"No JSON files found in folder: {folderPath}");
+            return;
         }
 
-        if (data == null)
+        foreach (string filePath in jsonFiles)
         {
-            Debug.LogWarning("Deserialized DungeonData is null.");
-            return null;
+            try
+            {
+                string jsonText = File.ReadAllText(filePath);
+                DungeonData data = JsonConvert.DeserializeObject<DungeonData>(jsonText);
+                if (data != null)
+                {
+                    allDungeons.Add(data);
+                }
+                else
+                {
+                    Debug.LogWarning($"Dungeon JSON '{filePath}' is null after deserialization.");
+                }
+            }
+            catch (System.Exception ex)
+            {
+                Debug.LogError($"Failed to read or deserialize '{filePath}': {ex.Message}");
+            }
         }
 
-        // Cache the loaded data so runtimeData is available to callers
-        runtimeData = data;
-        return runtimeData;
+        if (allDungeons.Count > 0)
+        {
+            runtimeData = allDungeons[0];
+            currentDungeonIndex = 0;
+        }
     }
 
     public DungeonData GetDungeonData(bool forceReload = false)
@@ -49,6 +77,46 @@ public class DungeonLoader : MonoBehaviour
         if (!forceReload && runtimeData != null)
             return runtimeData;
 
-        return LoadFromJSON();
+        if (allDungeons.Count == 0)
+        {
+            Debug.LogError("No dungeons loaded!");
+            return null;
+        }
+
+        runtimeData = allDungeons[currentDungeonIndex];
+        return runtimeData;
+    }
+    public void SetDungeonData(DungeonData data)
+    {
+        runtimeData = data;
+    }
+
+    public void LoadNextDungeon()
+    {
+        if (allDungeons.Count == 0)
+        {
+            Debug.LogError("No dungeons loaded!");
+            return;
+        }
+
+        currentDungeonIndex++;
+        if (currentDungeonIndex >= allDungeons.Count)
+            currentDungeonIndex = 0; // loop back to first level
+
+        runtimeData = allDungeons[currentDungeonIndex];
+        Debug.Log($"Loaded dungeon: {runtimeData}");
+    }
+
+    public void LoadDungeonByIndex(int index)
+    {
+        if (index < 0 || index >= allDungeons.Count)
+        {
+            Debug.LogError($"Dungeon index {index} is out of range!");
+            return;
+        }
+
+        currentDungeonIndex = index;
+        runtimeData = allDungeons[index];
+        Debug.Log($"Loaded dungeon: {runtimeData}");
     }
 }

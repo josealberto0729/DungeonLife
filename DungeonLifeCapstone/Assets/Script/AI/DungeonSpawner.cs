@@ -415,21 +415,14 @@ public class DungeonSpawner : MonoBehaviour
         if (doorPoint != null && doorPrefab != null)
         {
             GameObject door = Instantiate(doorPrefab, doorPoint.position, doorPoint.rotation, roomObj.transform);
-            DoorPortal portal = door.AddComponent<DoorPortal>();
-            portal.roomGridPosition = GetRoomGridPosition(roomObj);
-            portal.targetRoomGridPosition = targetRoomGridPos;
-
-            if (doorPointName.Contains("Right")) portal.direction = "Right";
-            else if (doorPointName.Contains("Left")) portal.direction = "Left";
-            else if (doorPointName.Contains("Top")) portal.direction = "Top";
-            else if (doorPointName.Contains("Bottom")) portal.direction = "Bottom";
+            Debug.Log($"SpawnDoor: placed door at named hook '{doorPointName}' for room {roomObj.name} at {doorPoint.position}");
+            // existing portal setup...
         }
         else
         {
-            // Fallback: compute door position at room edge if prefab doesn't include named hook
             if (doorPrefab == null)
             {
-                Debug.LogWarning($"Door prefab not assigned; cannot spawn door for {roomObj.name}.");
+                Debug.LogWarning($"SpawnDoor: doorPrefab not assigned; cannot spawn door for {roomObj.name}.");
                 return;
             }
 
@@ -538,6 +531,7 @@ public class DungeonSpawner : MonoBehaviour
         roomGameObjects.Clear();
         Random.InitState(System.DateTime.Now.Millisecond);
         int nextRoomCount = Random.Range(8,12);
+        DungeonLoader.Instance.LoadNextDungeon();
         CreateDungeon();
         if (player != null)
         {
