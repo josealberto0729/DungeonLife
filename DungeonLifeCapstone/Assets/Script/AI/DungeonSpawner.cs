@@ -14,7 +14,6 @@ public class DungeonSpawner : MonoBehaviour
     public GameObject normalRoomPrefab;
     public GameObject treasureRoomPrefab;
     public GameObject bossRoomPrefab;
-    public GameObject corridorTilePrefab;
     public GameObject shopRoomPrefab;
 
     public GameObject doorPrefab;
@@ -33,7 +32,6 @@ public class DungeonSpawner : MonoBehaviour
     public GameObject victoryPortalPrefab;
 
     public GameObject player;
-    public bool useRandomGeneration = false;
 
     private HashSet<Vector2Int> occupiedPositions = new HashSet<Vector2Int>();
     public Dictionary<Vector2Int, GameObject> roomGameObjects = new Dictionary<Vector2Int, GameObject>();
@@ -126,15 +124,11 @@ public class DungeonSpawner : MonoBehaviour
         roomsParent = new GameObject("DungeonRooms").transform;
         roomsParent.parent = transform;
 
-        if (corridorTilePrefab != null)
+        if (normalRoomPrefab != null)
         {
-            tileSize = GetFullPrefabSize(corridorTilePrefab);
+            tileSize = GetFullPrefabSize(normalRoomPrefab);
             Debug.Log("Tile size set from prefab: " + tileSize);
         }
-
-        int seed = customSeed ?? System.DateTime.Now.Millisecond;
-        Random.InitState(seed);
-        Debug.Log("Seed used: " + seed);
 
         // Force the loader to reload data from JSON so we start from original coordinates
         // each time CreateDungeon is called (prevents mutated coordinates from previous runs)
@@ -350,22 +344,19 @@ public class DungeonSpawner : MonoBehaviour
         // Horizontal path first
         while (current.x != to.x)
         {
-            Vector2Int next = new Vector2Int(current.x + (to.x > current.x ?1 : -1), current.y);
-
+            Vector2Int next = new Vector2Int(current.x + (to.x > current.x ? 1 : -1), current.y);
             current = next;
         }
 
         // Vertical path second
         while (current.y != to.y)
         {
-            Vector2Int next = new Vector2Int(current.x, current.y + (to.y > current.y ?1 : -1));
-
+            Vector2Int next = new Vector2Int(current.x, current.y + (to.y > current.y ? 1 : -1));
             current = next;
         }
 
-
-        TrySpawnDoorBetweenRooms(from, to);
-        TrySpawnDoorBetweenRooms(to, from);
+        // DO NOT spawn doors here to avoid duplicates.
+        // Door spawning is handled once in the outer loop where ArrangeRooms is called.
     }
 
 
@@ -409,64 +400,87 @@ public class DungeonSpawner : MonoBehaviour
         }
     }
 
+    // Replace the existing SpawnDoor method with this guarded version
     void SpawnDoor(GameObject roomObj, string doorPointName, Vector2Int targetRoomGridPos)
     {
+        // compute direction early for duplicate checks
+        string dir = doorPointName.Contains("Right") ? "Right"
+                   : doorPointName.Contains("Left") ? "Left"
+                   : doorPointName.Contains("Top") ? "Top"
+                   : doorPointName.Contains("Bottom") ? "Bottom"
+                   : null;
+
+        // If a door already exists on this room targeting the same room or same direction, skip
+        foreach (var existingPortal in roomObj.GetComponentsInChildren<DoorPortal>())
+        {
+            if (existingPortal == null) continue;
+            if (existingPortal.targetRoomGridPosition == targetRoomGridPos)
+            {
+                Debug.Log($"SpawnDoor: skipping duplicate door in {roomObj.name} -> already targets {targetRoomGridPos}");
+                return;
+            }
+            if (!string.IsNullOrEmpty(dir) && existingPortal.direction == dir)
+            {
+                Debug.Log($"SpawnDoor: skipping duplicate door in {roomObj.name} -> direction {dir} already has a door");
+                return;
+            }
+        }
+
         Transform doorPoint = roomObj.transform.Find(doorPointName);
         if (doorPoint != null && doorPrefab != null)
         {
             GameObject door = Instantiate(doorPrefab, doorPoint.position, doorPoint.rotation, roomObj.transform);
-            Debug.Log($"SpawnDoor: placed door at named hook '{doorPointName}' for room {roomObj.name} at {doorPoint.position}");
-            // existing portal setup...
-        }
-        else
-        {
-            if (doorPrefab == null)
-            {
-                Debug.LogWarning($"SpawnDoor: doorPrefab not assigned; cannot spawn door for {roomObj.name}.");
-                return;
-            }
-
-            Vector2Int gridPos = GetRoomGridPosition(roomObj);
-            Room roomData = null;
-            roomDataByGrid.TryGetValue(gridPos, out roomData);
-
-            Vector3 roomCenter = roomObj.transform.position;
-            Vector3 offset = Vector3.zero;
-
-            if (doorPointName.Contains("Right"))
-            {
-                float halfWidth = (roomData != null) ? (roomData.width * tileSize.x) /2f : tileSize.x /2f;
-                offset = new Vector3(halfWidth,0,0);
-            }
-            else if (doorPointName.Contains("Left"))
-            {
-                float halfWidth = (roomData != null) ? (roomData.width * tileSize.x) /2f : tileSize.x /2f;
-                offset = new Vector3(-halfWidth,0,0);
-            }
-            else if (doorPointName.Contains("Top"))
-            {
-                float halfHeight = (roomData != null) ? (roomData.height * tileSize.y) /2f : tileSize.y /2f;
-                offset = new Vector3(0, halfHeight,0);
-            }
-            else if (doorPointName.Contains("Bottom"))
-            {
-                float halfHeight = (roomData != null) ? (roomData.height * tileSize.y) /2f : tileSize.y /2f;
-                offset = new Vector3(0, -halfHeight,0);
-            }
-
-            Vector3 spawnPos = roomCenter + offset;
-            GameObject door = Instantiate(doorPrefab, spawnPos, Quaternion.identity, roomObj.transform);
             DoorPortal portal = door.AddComponent<DoorPortal>();
-            portal.roomGridPosition = gridPos;
+            portal.roomGridPosition = GetRoomGridPosition(roomObj);
             portal.targetRoomGridPosition = targetRoomGridPos;
-
-            if (doorPointName.Contains("Right")) portal.direction = "Right";
-            else if (doorPointName.Contains("Left")) portal.direction = "Left";
-            else if (doorPointName.Contains("Top")) portal.direction = "Top";
-            else if (doorPointName.Contains("Bottom")) portal.direction = "Bottom";
-
-            Debug.LogWarning($"Spawned fallback door for {roomObj.name} at {spawnPos} (no named hook '{doorPointName}' found).");
+            portal.direction = dir;
+            Debug.Log($"SpawnDoor: placed door at named hook '{doorPointName}' for room {roomObj.name} at {doorPoint.position}");
+            return;
         }
+
+        // Fallback logic unchanged but with the duplicate guard already applied above
+        if (doorPrefab == null)
+        {
+            Debug.LogWarning($"SpawnDoor: doorPrefab not assigned; cannot spawn door for {roomObj.name}.");
+            return;
+        }
+
+        Vector2Int gridPos = GetRoomGridPosition(roomObj);
+        Room roomData = null;
+        roomDataByGrid.TryGetValue(gridPos, out roomData);
+
+        Vector3 roomCenter = roomObj.transform.position;
+        Vector3 offset = Vector3.zero;
+
+        if (doorPointName.Contains("Right"))
+        {
+            float halfWidth = (roomData != null) ? (roomData.width * tileSize.x) / 2f : tileSize.x / 2f;
+            offset = new Vector3(halfWidth, 0, 0);
+        }
+        else if (doorPointName.Contains("Left"))
+        {
+            float halfWidth = (roomData != null) ? (roomData.width * tileSize.x) / 2f : tileSize.x / 2f;
+            offset = new Vector3(-halfWidth, 0, 0);
+        }
+        else if (doorPointName.Contains("Top"))
+        {
+            float halfHeight = (roomData != null) ? (roomData.height * tileSize.y) / 2f : tileSize.y / 2f;
+            offset = new Vector3(0, halfHeight, 0);
+        }
+        else if (doorPointName.Contains("Bottom"))
+        {
+            float halfHeight = (roomData != null) ? (roomData.height * tileSize.y) / 2f : tileSize.y / 2f;
+            offset = new Vector3(0, -halfHeight, 0);
+        }
+
+        Vector3 spawnPos = roomCenter + offset;
+        GameObject fallbackDoor = Instantiate(doorPrefab, spawnPos, Quaternion.identity, roomObj.transform);
+        DoorPortal fallbackPortal = fallbackDoor.AddComponent<DoorPortal>();
+        fallbackPortal.roomGridPosition = gridPos;
+        fallbackPortal.targetRoomGridPosition = targetRoomGridPos;
+        fallbackPortal.direction = dir;
+
+        Debug.LogWarning($"Spawned fallback door for {roomObj.name} at {spawnPos} (no named hook '{doorPointName}' found).");
     }
 
     Vector2Int GetRoomGridPosition(GameObject roomObj)
@@ -523,7 +537,7 @@ public class DungeonSpawner : MonoBehaviour
         _ => null
     };
 
-    public void GenerateNextLevel()
+    public void GenerateNextLevel()                                         
     {
 
         if (roomsParent != null) Destroy(roomsParent.gameObject);

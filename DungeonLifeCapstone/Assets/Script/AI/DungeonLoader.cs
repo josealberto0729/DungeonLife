@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.IO;
@@ -8,7 +8,7 @@ public class DungeonLoader : MonoBehaviour
     public string levelFolderName = "Level"; // folder inside persistentDataPath
     private List<DungeonData> allDungeons = new List<DungeonData>();
     private int currentDungeonIndex = 0;
-
+    private bool isDungeonGenerating = false;
     private DungeonData runtimeData;
     public static DungeonLoader Instance { get; private set; }
     private void Awake()
@@ -26,6 +26,17 @@ public class DungeonLoader : MonoBehaviour
         LoadAllDungeons();
     }
 
+    private void Start()
+    {
+        LLMJsonCreator.Instance.onJsonGenerated.AddListener(OnJsonReady);
+    }
+    void OnJsonReady()
+    {
+        Debug.Log("DungeonLoader detected new dungeon JSON generated.");
+        isDungeonGenerating = false;
+        LoadAllDungeons();
+    }
+
     private void LoadAllDungeons()
     {
         allDungeons.Clear();
@@ -40,7 +51,7 @@ public class DungeonLoader : MonoBehaviour
         string[] jsonFiles = Directory.GetFiles(folderPath, "*.json");
         if (jsonFiles.Length == 0)
         {
-            Debug.LogError($"No JSON files found in folder: {folderPath}");
+            Debug.Log($"No JSON files found in folder: {folderPath}");
             return;
         }
 
@@ -65,11 +76,11 @@ public class DungeonLoader : MonoBehaviour
             }
         }
 
-        if (allDungeons.Count > 0)
-        {
-            runtimeData = allDungeons[0];
-            currentDungeonIndex = 0;
-        }
+        //if (allDungeons.Count > 0)
+        //{
+        //    runtimeData = allDungeons[0];
+        //    currentDungeonIndex = 0;
+        //}
     }
 
     public DungeonData GetDungeonData(bool forceReload = false)
@@ -89,6 +100,16 @@ public class DungeonLoader : MonoBehaviour
     public void SetDungeonData(DungeonData data)
     {
         runtimeData = data;
+    }
+
+    public void CheckToGenerateNewDungeons()
+    {
+        if(currentDungeonIndex > allDungeons.Count/2 && !isDungeonGenerating)
+        {
+            Debug.Log("DungeonLoader is now calling llm to generate new maps");
+            isDungeonGenerating = true;
+            LLMJsonCreator.Instance.StartJsonGeneration();
+        }
     }
 
     public void LoadNextDungeon()

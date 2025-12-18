@@ -3,6 +3,7 @@ using UnityEngine;
 [System.Serializable]
 public class DungeonData
 {
+    public string dungeonID;
     public List<Room> rooms;
     public List<Connection> connections;
     public List<Powerup> powerups;

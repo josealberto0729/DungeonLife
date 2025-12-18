@@ -188,6 +188,7 @@ MonoBehaviour:
   projectilePrefab: {fileID: 0}
   firePoint: {fileID: 0}
   projectileSpeed: 8
+  firingRange: 6
   OnIdleEnter:
     m_PersistentCalls:
       m_Calls: []

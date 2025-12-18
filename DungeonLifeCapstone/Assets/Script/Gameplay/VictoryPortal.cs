@@ -16,19 +16,10 @@ public class VictoryPortal : MonoBehaviour
 
         if (other.CompareTag("Player"))
         {
-            hasActivated = true; // prevent multiple triggers
-            Debug.Log("Player entered Victory Portal → Loading new dungeon");
-            //DungeonData newDungeon = OpenAIDungeonGenerator.Instance.generatedDungeon;
-
-            if (DungeonSpawner.Instance != null)
-            {
-                DungeonSpawner.Instance.GenerateNextLevel();
-                Destroy(this.gameObject);
-            }
-            else
-            {
-                Debug.LogError("No generated dungeon found!");
-            }
+            DungeonLoader.Instance.CheckToGenerateNewDungeons();
+            DungeonLoader.Instance.LoadNextDungeon();
+            DungeonSpawner.Instance.GenerateNextLevel();
+            Destroy(this.gameObject);
         }
     }
 

@@ -1,6 +1,9 @@
+using Newtonsoft.Json;
 using System.Collections.Generic;
-using Unity.VisualScripting;
+using System.IO;
 using UnityEngine;
+using UnityEngine.UI;
+using static Cinemachine.DocumentationSortingAttribute;
 
 public enum MenuIndex
 {
@@ -19,6 +22,8 @@ public class MenuController : MonoBehaviour
 
     [SerializeField] List<GameObject> menuList = new List<GameObject>();
 
+    public Button startButton;  
+
     public void SwitchMenu(MenuIndex index)
     {
         foreach(GameObject menu in menuList)
@@ -30,11 +35,32 @@ public class MenuController : MonoBehaviour
 
     private void Start()
     {
+        LLMJsonCreator.Instance.onJsonGenerated.AddListener(StartButtonActivate);
         ShowMainMenuView();
+        CheckLevel();
     }
 
-
-
+    void StartButtonActivate()
+    {
+        startButton.interactable = true;
+    }
+    public void CheckLevel()
+    {
+        string folderPath = Path.Combine(Application.persistentDataPath, "Level");
+        if (!Directory.Exists(folderPath))
+        {
+            Debug.LogError($"Dungeon folder not found at: {folderPath}");
+            return;
+        }
+        string[] jsonFiles = Directory.GetFiles(folderPath, "*.json");
+        if (jsonFiles.Length == 0)
+        {
+            startButton.interactable = false;
+            Debug.Log($"No JSON files found in folder: {folderPath}");
+            LLMJsonCreator.Instance.StartJsonGeneration();
+            return;
+        }
+    }
 
 
     public void UpdateUI(float percentage)
