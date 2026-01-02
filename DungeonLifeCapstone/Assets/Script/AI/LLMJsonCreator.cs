@@ -36,7 +36,7 @@ public class Choice
 public class LLMJsonCreator : MonoBehaviour
 {
     public string apiKey;
-    public string model = "gpt-4o-mini";
+    public string model = "gpt-4.1-mini";
     public UnityEvent onJsonGenerated;
     public UnityEvent JsonGenerationStarted;
     private bool isGenerating = false;
@@ -46,6 +46,7 @@ public class LLMJsonCreator : MonoBehaviour
     private int currentRound = 1;
     public string promptFileName = "DungeonPrompt";
     private string loadedPrompt;
+    private bool hasStarted = false;
 
     public static LLMJsonCreator Instance { get; private set; }
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -135,14 +136,19 @@ public class LLMJsonCreator : MonoBehaviour
         }
         Debug.Log("All requested map JSON files generated!");
         isGenerating = false;
-        onJsonGenerated?.Invoke();
+        if(!hasStarted)
+        {   
+            hasStarted = true;
+            onJsonGenerated?.Invoke();
+        }   
+
 
     }
     private async Task<string> GenerateJsonFromLLM()
     {
         string endpoint = "https://api.openai.com/v1/chat/completions";
         string userPrompt;
-        userPrompt = loadedPrompt + "\nGenerate a new, unique, random dungeon layout";
+        userPrompt = "\nGenerate a new, unique, random dungeon layout";
         var requestData = new ChatRequest
         {
             model = model,
@@ -163,6 +169,7 @@ public class LLMJsonCreator : MonoBehaviour
                 "Always output VALID JSON ONLY (no text, no explanations, no code blocks). " +
                 "Each generation must be unique and must NOT copy previous examples." +
                 "No two rooms can share the same x and y values." +
+                "Make all room has a connections"+
                 loadedPrompt
 
             },
@@ -202,7 +209,6 @@ public class LLMJsonCreator : MonoBehaviour
                 // Extract the JSON content (the actual skill)
                 string jsonContent = response?.choices?[0]?.message?.content?.Trim();
 
-                // Optional: remove markdown code fences if model includes them accidentally
                 if (!string.IsNullOrEmpty(jsonContent))
                 {
                     jsonContent = Regex.Replace(jsonContent, @"^```(json)?|```$", "", RegexOptions.Multiline).Trim();

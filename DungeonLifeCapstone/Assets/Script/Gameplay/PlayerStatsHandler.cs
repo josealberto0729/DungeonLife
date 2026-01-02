@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.InputSystem.XR;
 
 public class PlayerStatsHandler : MonoBehaviour
 {
@@ -20,7 +21,10 @@ public class PlayerStatsHandler : MonoBehaviour
         //}
 
     }
-
+    private void OnEnable()
+    {
+        MenuController.Instance.ShowIngameView();
+    }
     public void Start()
     {
         GameManager.Instance.player = this;
@@ -45,4 +49,5 @@ public class PlayerStatsHandler : MonoBehaviour
         MenuController.Instance.SwitchMenu(MenuIndex.Gameover);
         Destroy(gameObject); 
     }
+
 }

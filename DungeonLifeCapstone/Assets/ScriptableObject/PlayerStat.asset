@@ -15,9 +15,9 @@ MonoBehaviour:
   playerID: 1
   curExp: 0
   level: 1
-  maxHealth: 100
-  currentHealth: 83.7
+  maxHealth: 140.2552
+  currentHealth: 4530
   moveSpeed: 5
-  meleeDamage: 100
-  rangedDamage: 50
+  meleeDamage: 155.13281
+  rangedDamage: 77.56641
   attackCooldown: 1

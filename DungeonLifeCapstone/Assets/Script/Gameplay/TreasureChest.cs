@@ -13,7 +13,8 @@ public class TreasureChest : MonoBehaviour
     }
     void Start()
     {
-        MenuController.Instance.ShowRoomReward();
+        //if (upgradeUI != null)
+        //    upgradeUI.Show();
     }
 
     // Update is called once per frame

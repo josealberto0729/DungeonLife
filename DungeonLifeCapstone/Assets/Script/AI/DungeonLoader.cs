@@ -44,7 +44,8 @@ public class DungeonLoader : MonoBehaviour
         string folderPath = Path.Combine(Application.persistentDataPath, levelFolderName);
         if (!Directory.Exists(folderPath))
         {
-            Debug.LogError($"Dungeon folder not found at: {folderPath}");
+            Directory.CreateDirectory(folderPath);
+            Debug.Log($"Created dungeon folder at: {folderPath}");
             return;
         }
 
@@ -76,11 +77,6 @@ public class DungeonLoader : MonoBehaviour
             }
         }
 
-        //if (allDungeons.Count > 0)
-        //{
-        //    runtimeData = allDungeons[0];
-        //    currentDungeonIndex = 0;
-        //}
     }
 
     public DungeonData GetDungeonData(bool forceReload = false)

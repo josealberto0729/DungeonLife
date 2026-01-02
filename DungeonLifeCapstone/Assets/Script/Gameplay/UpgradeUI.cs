@@ -13,6 +13,7 @@ public class UpgradeUI : MonoBehaviour
     {
         player = GameManager.Instance.player;
         gameObject.SetActive(false); // hidden by default
+        Show();
     }
 
     public void Show()

@@ -162,10 +162,12 @@ public class DungeonSpawner : MonoBehaviour
         }
 
         GenerateDungeon();
+        MenuController.Instance.ShowIngameView();
 
         // Re-enable previously disabled generator components
         foreach (var mb in disabledGenerators)
             mb.enabled = true;
+
     }
     public void RespawnPlayer()
     {
