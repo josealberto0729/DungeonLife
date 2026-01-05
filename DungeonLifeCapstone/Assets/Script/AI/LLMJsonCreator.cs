@@ -85,6 +85,10 @@ public class LLMJsonCreator : MonoBehaviour
         Debug.Log("OpenAI configuration loaded successfully.");
 
     }
+    public void HasStarted()
+    {
+        hasStarted = true;
+    }
     public void StartJsonGeneration()
     {
         if (isGenerating)

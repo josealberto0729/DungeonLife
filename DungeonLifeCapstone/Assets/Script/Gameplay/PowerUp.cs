@@ -33,6 +33,7 @@ public class PowerUp : MonoBehaviour
                 break;
             case UpgradeSO.UpgradeType.Heal:
                 player.stats.currentHealth = player.stats.maxHealth;
+                Debug.Log("Player healed to full health.");
                 MenuController.Instance.UpdateUI(player.stats.currentHealth);
                 break;
         }
@@ -44,7 +45,7 @@ public class PowerUp : MonoBehaviour
     {
         if(collision.CompareTag("Player"))
         {
-            //ApplyPowerUp(upgrade);
+            ApplyPowerUp(upgrade);
             Destroy(gameObject);
         }
     }

@@ -11,6 +11,8 @@ public class IngameView : MonoBehaviour
     public void UpdateHealth(float percentage)
     {
         Debug.Log("health bar update :" + percentage);
-        healthBar.fillAmount = percentage / 100;
+        percentage = (percentage / GameManager.Instance.player.stats.maxHealth) * 100f;
+        float normalized = Mathf.Clamp01(percentage / 100f);
+        healthBar.fillAmount = normalized;
     }
 }

@@ -178,17 +178,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   player: {fileID: 3843161169673783915, guid: 2c9205eeebc750c40956f03cd3a36cf9, type: 3}
   detectionRange: 5
-  attackRange: 1.2
+  attackRange: 3
   moveSpeed: 2
   rb: {fileID: 0}
   patrolPoints: []
   currentPatrolIndex: 0
   isRanged: 0
-  stats: {fileID: 11400000, guid: 17bf0ad605bf11d4aae028b4d1fccb06, type: 2}
+  stats: {fileID: 11400000, guid: a2646bcecc3ee52479155fb4ca2c97a2, type: 2}
   projectilePrefab: {fileID: 0}
   firePoint: {fileID: 0}
   projectileSpeed: 8
-  firingRange: 6
+  firingRange: 15
   OnIdleEnter:
     m_PersistentCalls:
       m_Calls: []

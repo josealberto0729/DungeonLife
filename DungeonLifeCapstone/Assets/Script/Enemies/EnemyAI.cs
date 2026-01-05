@@ -20,7 +20,7 @@ public class EnemyAI : MonoBehaviour
     public GameObject projectilePrefab;       
     public Transform firePoint;               
     public float projectileSpeed = 8f;
-    public float firingRange = 6f;
+    public float firingRange = 10f;
 
     [Header("Unity Events")]
     public UnityEvent OnIdleEnter;
